@@ -2,6 +2,9 @@
 export { Agent } from './agent';
 export type { AgentConfig } from './agent';
 
+export { Team } from './team';
+export type { TeamConfig, TeamResult, AgentResponse } from './team';
+
 export { Tool } from './tool';
 
 export { Memory } from './memory';
