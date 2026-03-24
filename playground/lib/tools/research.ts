@@ -6,9 +6,31 @@ export const webSearch = Tool.create({
   parameters: { query: { type: 'string', description: 'The search query' } },
   execute: async ({ query }) => {
     const encoded = encodeURIComponent(query as string);
-    const results: string[] = [];
 
-    // Try Wikipedia search first — reliable and always returns results
+    // Brave Search API — real web results
+    const braveKey = process.env.BRAVE_SEARCH_API_KEY;
+    if (braveKey) {
+      try {
+        const response = await fetch(
+          `https://api.search.brave.com/res/v1/web/search?q=${encoded}&count=5`,
+          { headers: { 'X-Subscription-Token': braveKey, Accept: 'application/json' } },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const results: string[] = [];
+          if (data.web?.results) {
+            for (const r of data.web.results.slice(0, 5)) {
+              results.push(`${r.title}: ${r.description}`);
+            }
+          }
+          if (results.length > 0) return results.join('\n\n');
+        }
+      } catch {
+        /* fall through to Wikipedia */
+      }
+    }
+
+    // Fallback: Wikipedia
     try {
       const wikiResponse = await fetch(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encoded}`,
@@ -16,54 +38,27 @@ export const webSearch = Tool.create({
       );
       if (wikiResponse.ok) {
         const wikiData = await wikiResponse.json();
-        if (wikiData.extract) {
-          results.push(`Wikipedia: ${wikiData.extract}`);
-        }
+        if (wikiData.extract) return `Wikipedia: ${wikiData.extract}`;
+      }
+
+      const searchResponse = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encoded}&format=json&srlimit=3`,
+        { headers: { 'User-Agent': 'agent-kit-playground/1.0' } },
+      );
+      const searchData = await searchResponse.json();
+      if (searchData.query?.search?.length) {
+        return searchData.query.search
+          .map(
+            (item: { title: string; snippet: string }) =>
+              `${item.title}: ${item.snippet.replace(/<[^>]*>/g, '')}`,
+          )
+          .join('\n\n');
       }
     } catch {
       /* fall through */
     }
 
-    // Also try Wikipedia search API for broader matches
-    if (results.length === 0) {
-      try {
-        const searchResponse = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encoded}&format=json&srlimit=3`,
-          { headers: { 'User-Agent': 'agent-kit-playground/1.0' } },
-        );
-        const searchData = await searchResponse.json();
-        if (searchData.query?.search?.length) {
-          for (const item of searchData.query.search) {
-            const snippet = item.snippet.replace(/<[^>]*>/g, '');
-            results.push(`${item.title}: ${snippet}`);
-          }
-        }
-      } catch {
-        /* fall through */
-      }
-    }
-
-    // Fallback to DuckDuckGo
-    if (results.length === 0) {
-      try {
-        const ddgResponse = await fetch(
-          `https://api.duckduckgo.com/?q=${encoded}&format=json&no_html=1`,
-        );
-        const ddgData = await ddgResponse.json();
-        if (ddgData.AbstractText) results.push(ddgData.AbstractText);
-        if (ddgData.RelatedTopics) {
-          for (const topic of ddgData.RelatedTopics.slice(0, 3)) {
-            if (topic.Text) results.push(topic.Text);
-          }
-        }
-      } catch {
-        /* fall through */
-      }
-    }
-
-    return results.length > 0
-      ? results.join('\n\n')
-      : `No results found for "${query}". Try rephrasing your search.`;
+    return `No results found for "${query}". Try rephrasing your search.`;
   },
 });
 
