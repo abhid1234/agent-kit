@@ -1,5 +1,9 @@
 # agent-kit
 
+[![CI](https://github.com/abhid1234/agent-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/abhid1234/agent-kit/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@avee1234/agent-kit)](https://www.npmjs.com/package/@avee1234/agent-kit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 TypeScript-first library for building stateful, persistent AI agents.
 
 <p align="center">
