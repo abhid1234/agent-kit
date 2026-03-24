@@ -102,4 +102,77 @@ describe('SQLiteStore', () => {
       expect(results[0].timestamp).toBe(2000);
     });
   });
+
+  describe('embeddings', () => {
+    it('saves and retrieves embedding, returning most similar summary first', async () => {
+      const summaryA = createSummary({ content: 'neural network discussion' });
+      const summaryB = createSummary({ content: 'gardening tips' });
+      await store.saveSummary('agent-1', summaryA);
+      await store.saveSummary('agent-1', summaryB);
+
+      await store.saveEmbedding('agent-1', summaryA.id, [1, 0, 0]);
+      await store.saveEmbedding('agent-1', summaryB.id, [0, 1, 0]);
+
+      const results = await store.searchByEmbedding('agent-1', [1, 0, 0], 1);
+      expect(results).toHaveLength(1);
+      expect(results[0].id).toBe(summaryA.id);
+    });
+
+    it('returns top N results ranked by cosine similarity', async () => {
+      const s1 = createSummary({ content: 'alpha' });
+      const s2 = createSummary({ content: 'beta' });
+      const s3 = createSummary({ content: 'gamma' });
+      for (const s of [s1, s2, s3]) await store.saveSummary('agent-1', s);
+
+      await store.saveEmbedding('agent-1', s1.id, [0.9, 0.1]);
+      await store.saveEmbedding('agent-1', s2.id, [0.8, 0.2]);
+      await store.saveEmbedding('agent-1', s3.id, [0.1, 0.9]);
+
+      const results = await store.searchByEmbedding('agent-1', [1, 0], 2);
+      expect(results).toHaveLength(2);
+      const ids = results.map((r) => r.id);
+      expect(ids).toContain(s1.id);
+      expect(ids).toContain(s2.id);
+    });
+
+    it('returns empty array when no embeddings exist', async () => {
+      const results = await store.searchByEmbedding('agent-1', [1, 0], 5);
+      expect(results).toEqual([]);
+    });
+
+    it('isolates embeddings by agentId', async () => {
+      const summary = createSummary({ content: 'topic A' });
+      await store.saveSummary('agent-1', summary);
+      await store.saveEmbedding('agent-1', summary.id, [1, 0, 0]);
+
+      const results = await store.searchByEmbedding('agent-2', [1, 0, 0], 5);
+      expect(results).toEqual([]);
+    });
+
+    it('persists embeddings across store instances', async () => {
+      const summary = createSummary({ content: 'persistent embedding test' });
+      await store.saveSummary('agent-1', summary);
+      await store.saveEmbedding('agent-1', summary.id, [0.5, 0.5, 0.0]);
+      // Close and reopen (afterEach will also close, but better-sqlite3 is idempotent on closed db)
+      store.close();
+
+      const store2 = new SQLiteStore(TEST_DB);
+      const results = await store2.searchByEmbedding('agent-1', [1, 1, 0], 1);
+      expect(results).toHaveLength(1);
+      expect(results[0].id).toBe(summary.id);
+      store2.close();
+    });
+
+    it('upserts embedding on duplicate summaryId', async () => {
+      const summary = createSummary({ content: 'upsert test' });
+      await store.saveSummary('agent-1', summary);
+      await store.saveEmbedding('agent-1', summary.id, [1, 0]);
+      await store.saveEmbedding('agent-1', summary.id, [0, 1]); // overwrite
+
+      const results = await store.searchByEmbedding('agent-1', [0, 1], 1);
+      expect(results).toHaveLength(1);
+      // Score should be 1 (identical) now that we stored [0,1]
+      expect(results[0].id).toBe(summary.id);
+    });
+  });
 });

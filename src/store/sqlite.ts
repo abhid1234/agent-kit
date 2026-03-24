@@ -2,6 +2,7 @@
 import { createRequire } from 'module';
 import type { Message, Summary } from '../types';
 import type { MemoryStore } from './interface';
+import { cosineSimilarity } from './cosine';
 
 const require = createRequire(import.meta.url);
 
@@ -34,8 +35,14 @@ export class SQLiteStore implements MemoryStore {
         message_range_from INTEGER NOT NULL,
         message_range_to INTEGER NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS embeddings (
+        summary_id TEXT PRIMARY KEY,
+        agent_id TEXT NOT NULL,
+        embedding BLOB NOT NULL
+      );
       CREATE INDEX IF NOT EXISTS idx_messages_agent ON messages(agent_id);
       CREATE INDEX IF NOT EXISTS idx_summaries_agent ON summaries(agent_id);
+      CREATE INDEX IF NOT EXISTS idx_embeddings_agent ON embeddings(agent_id);
     `);
   }
 
@@ -118,6 +125,53 @@ export class SQLiteStore implements MemoryStore {
       timestamp: row.timestamp,
       messageRange: { from: row.message_range_from, to: row.message_range_to },
     }));
+  }
+
+  async saveEmbedding(agentId: string, summaryId: string, embedding: number[]): Promise<void> {
+    this.db
+      .prepare(
+        'INSERT OR REPLACE INTO embeddings (summary_id, agent_id, embedding) VALUES (?, ?, ?)',
+      )
+      .run(summaryId, agentId, JSON.stringify(embedding));
+  }
+
+  async searchByEmbedding(agentId: string, embedding: number[], limit: number): Promise<Summary[]> {
+    const rows = this.db
+      .prepare(
+        `SELECT e.summary_id, s.content, s.timestamp, s.message_range_from, s.message_range_to, e.embedding
+         FROM embeddings e
+         JOIN summaries s ON e.summary_id = s.id
+         WHERE e.agent_id = ?`,
+      )
+      .all(agentId) as Array<{
+      summary_id: string;
+      content: string;
+      timestamp: number;
+      message_range_from: number;
+      message_range_to: number;
+      embedding: string;
+    }>;
+
+    if (rows.length === 0) return [];
+
+    const scored = rows.map((row) => {
+      const storedEmbedding = JSON.parse(row.embedding) as number[];
+      const score = cosineSimilarity(embedding, storedEmbedding);
+      return {
+        summary: {
+          id: row.summary_id,
+          content: row.content,
+          timestamp: row.timestamp,
+          messageRange: { from: row.message_range_from, to: row.message_range_to },
+        } satisfies Summary,
+        score,
+      };
+    });
+
+    return scored
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map((entry) => entry.summary);
   }
 
   close(): void {
