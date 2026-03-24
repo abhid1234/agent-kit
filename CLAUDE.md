@@ -6,24 +6,16 @@
 
 ## Why This Exists
 
-### The Author
-- **Abhi** — works at Google, targeting an AI Product Manager role at an AI model/infra startup (Anthropic, Modal, Replicate, Together, etc.)
-- Built **Mindweave** (mindweave.space) — a production AI-powered knowledge hub with 30+ features, 2,700+ tests, Next.js 15 + PostgreSQL + pgvector + Google Gemini
-- Built **87+ Claude Code skills** covering development, deployment, growth, security, and autonomous loops
-- Deep experience with: TypeScript, Next.js, PostgreSQL, pgvector, embeddings, RAG, server actions, Drizzle ORM
+Existing agent frameworks are either Python-first (LangChain, CrewAI) or focused on streaming UI (Vercel AI SDK). There's a gap for TypeScript developers who need:
+- Persistent memory that works across sessions without manual setup
+- Simple, reliable tool execution
+- Built-in observability without paid add-ons
+- Great TypeScript types and developer experience
 
-### The Goal
-This project is a **portfolio piece** to demonstrate AI infrastructure thinking for PM interviews at model/infra companies. It should showcase:
-- Understanding of the agent infrastructure layer (not just "I built an app using AI")
-- API design skills (the library IS a developer product)
-- Product thinking about developer experience
-- Technical depth in memory systems, tool execution, and multi-agent coordination
-
-### Constraints
-- **Model-agnostic ONLY** — no Google Gemini, no Anthropic Claude, no OpenAI GPT in defaults. Use Ollama (local Llama/Mistral) for demos. Users bring their own model.
-- **No model comparison or evaluation** — Abhi works at Google, can't publicly compare models
-- **TypeScript-first** — this is the differentiator vs LangChain (Python-first)
-- **Open-source** — MIT license, published to npm as `@agent-kit/core` (or similar)
+### Design Principles
+- **Model-agnostic** — no vendor lock-in. Works with any OpenAI-compatible endpoint (Ollama, OpenRouter, etc.). Users bring their own model.
+- **TypeScript-first** — not a Python port. Designed for the TypeScript ecosystem.
+- **Open-source** — MIT license
 
 ## Product Vision
 
@@ -152,25 +144,12 @@ ai-agent-framework/
 └── README.md              # GitHub README
 ```
 
-## Interview Pitch
-
-> "I built Agent Kit because I saw developers struggling with two things: making agents remember context across sessions, and coordinating multiple agents on complex tasks. LangChain solves for breadth — it supports every model and every pattern. I solved for depth — persistent memory, reliable tool execution, and multi-agent coordination that actually works. It's TypeScript-first because that's where the production apps are."
-
-## What Demonstrates PM Skills
-
-1. **API Design** — The library IS a developer product. Every design decision (4 core concepts, progressive complexity, sensible defaults) is a product decision.
-2. **Developer Experience** — Zero-config memory, type-safe tools, one-command setup. This shows you can design for developers.
-3. **Architecture Thinking** — Model adapter pattern, pluggable memory stores, event-driven observability. This shows you understand infrastructure.
-4. **Market Understanding** — Positioned against LangChain, Vercel AI SDK, CrewAI with clear differentiation.
-5. **Shipping** — Published npm package, working examples, documentation. This shows you execute.
-
 ## Development Workflow
 
-Use superpowers skills:
-1. `/brainstorming` — Design and spec (START HERE)
-2. `/writing-plans` — Implementation plan
-3. `/subagent-driven-development` — Build it
-4. `/verification-before-completion` — Verify quality
+1. Design and spec
+2. Implementation plan
+3. Build with TDD
+4. Verify quality
 
 ## Tech Stack
 
