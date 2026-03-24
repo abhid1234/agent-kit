@@ -4,12 +4,15 @@ import { createSummary } from './types';
 import type { MemoryStore } from './store/interface';
 import { InMemoryStore } from './store/in-memory';
 import { SQLiteStore } from './store/sqlite';
+import { PostgresStore } from './store/postgres';
 import type { ModelAdapter } from './model/adapter';
 import type { EmbeddingAdapter } from './model/embedding-adapter';
 
 export interface MemoryConfig {
-  store?: 'memory' | 'sqlite' | MemoryStore;
+  store?: 'memory' | 'sqlite' | 'postgres' | MemoryStore;
   path?: string;
+  /** Connection string for PostgreSQL (e.g., process.env.DATABASE_URL). Used when store: 'postgres'. */
+  url?: string;
   windowSize?: number;
   summarizeAfter?: number;
   /** Optional embedding adapter for semantic (vector) search. Falls back to keyword search if not set. */
@@ -38,6 +41,14 @@ export class Memory {
       this.store = new InMemoryStore();
     } else if (config.store === 'sqlite') {
       this.store = new SQLiteStore(config.path ?? './agent-memory.db');
+    } else if (config.store === 'postgres') {
+      const connectionString = config.url ?? config.path;
+      if (!connectionString) {
+        throw new Error(
+          "Memory store 'postgres' requires a connection string via the 'url' config option.",
+        );
+      }
+      this.store = new PostgresStore({ connectionString });
     } else {
       this.store = config.store;
     }
