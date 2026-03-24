@@ -1,5 +1,5 @@
 {
-  "name": "agent-kit",
+  "name": "@avee1234/agent-kit",
   "version": "0.1.0",
   "description": "TypeScript-first library for building stateful, persistent AI agents",
   "type": "module",
