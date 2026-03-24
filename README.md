@@ -157,6 +157,66 @@ new Memory({ store: myCustomStore })
 
 Auto-summarization: when `summarizeAfter` messages accumulate, the agent summarizes them and stores the summary. Older context is retrieved via `searchSummaries`.
 
+### Team (Multi-Agent Coordination)
+
+Coordinate multiple agents on a single task using four strategies.
+
+**Sequential** — agents run in order, each getting the previous agent's output:
+
+```typescript
+import { Agent, Team } from '@avee1234/agent-kit';
+
+const team = new Team({
+  agents: [researcher, writer],
+  strategy: 'sequential',
+});
+const result = await team.run('Research AI frameworks and write a summary');
+// writer receives researcher's output as context
+```
+
+**Parallel** — all agents run concurrently, results merged:
+
+```typescript
+const team = new Team({
+  agents: [researcher, writer, critic],
+  strategy: 'parallel',
+});
+const result = await team.run('Analyze this codebase');
+// result.responses has each agent's individual output
+```
+
+**Debate** — agents take turns critiquing and refining:
+
+```typescript
+const team = new Team({
+  agents: [proposer, critic],
+  strategy: 'debate',
+  maxRounds: 3,
+});
+const result = await team.run('What is the best database for embeddings?');
+// 3 rounds of back-and-forth, then final answer
+```
+
+**Hierarchical** — a manager delegates tasks to specialists:
+
+```typescript
+const team = new Team({
+  agents: [researcher, writer, critic],
+  strategy: 'hierarchical',
+  manager: new Agent({ name: 'manager', system: 'You coordinate a team of specialists.' }),
+});
+const result = await team.run('Write a blog post about transformer alternatives');
+// manager decides who does what and when
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `agents` | `Agent[]` | — | The agents to coordinate |
+| `strategy` | `string` | — | `'sequential'`, `'parallel'`, `'debate'`, or `'hierarchical'` |
+| `manager` | `Agent` | — | Required for hierarchical strategy |
+| `maxRounds` | `number` | `3` | Number of debate rounds |
+| `maxDelegations` | `number` | `10` | Max delegations for hierarchical |
+
 ## Model Configuration
 
 ### Mock (zero config, built-in)
