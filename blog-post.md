@@ -8,7 +8,7 @@ cover_image:
 
 Most agent frameworks are Python-first or streaming-only. I built one for TypeScript developers who need persistent memory and multi-agent coordination — and the process taught me a lot about what "production-ready" actually means for AI agents.
 
-The result is [`@avee1234/agent-kit`](https://github.com/abhid1234/agent-kit): a TypeScript-first library built around 4 core concepts, with 117 tests and full CI. Here's what I built, why, and what I'd do differently.
+The result is [`@avee1234/agent-kit`](https://github.com/abhid1234/agent-kit): a TypeScript-first library built around 4 core concepts, with 138 tests and full CI. Here's what I built, why, and what I'd do differently.
 
 ---
 
@@ -16,11 +16,23 @@ The result is [`@avee1234/agent-kit`](https://github.com/abhid1234/agent-kit): a
 
 When I started building AI agents in TypeScript, I ran into the same wall most people hit:
 
-**LangChain** is the obvious choice, but it's a Python framework that was ported to JavaScript as an afterthought. The TypeScript SDK lags behind, the abstractions are heavy (100+ classes to learn), and setting up persistent memory requires you to wire together 4–5 separate pieces. For a weekend project it's fine. For something you need to maintain, it's exhausting.
-
-**Vercel AI SDK** is excellent — the streaming UX is genuinely great. But it's optimized for chat UI, not stateful agents. There's no built-in memory. Every conversation starts from scratch.
-
-**CrewAI** has the multi-agent coordination model I wanted, but it's Python-only. Not an option for a TypeScript codebase.
+<div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
+    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">LangChain</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Python-first, ported to JS as afterthought. 100+ classes to learn. Memory requires wiring 4-5 pieces together.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: Too complex</div>
+  </div>
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
+    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Vercel AI SDK</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Great streaming UX, but optimized for chat UI. No built-in memory. Every conversation starts from scratch.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: No memory</div>
+  </div>
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
+    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">CrewAI</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Has the multi-agent model I wanted, but it's Python-only. Not an option for a TypeScript codebase.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: Wrong language</div>
+  </div>
+</div>
 
 What I needed was simple: an agent that could use tools, remember things across sessions, and coordinate with other agents — all in TypeScript, without a PhD in framework internals. So I built it.
 
@@ -28,7 +40,39 @@ What I needed was simple: an agent that could use tools, remember things across 
 
 ## The 4 Core Concepts
 
-I made a deliberate choice to keep the surface area small. agent-kit has exactly 4 things to learn: `Agent`, `Tool`, `Memory`, and `Team`.
+<div style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%); border-radius: 16px; padding: 32px; margin: 24px 0; border: 1px solid #2a2a4a;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <span style="font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 2px;">Everything you need to learn</span>
+  </div>
+  <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+    <div style="background: #1e1e3e; border: 2px solid #7c3aed; border-radius: 12px; padding: 16px 24px; text-align: center; min-width: 120px;">
+      <div style="font-size: 28px; margin-bottom: 4px;">🤖</div>
+      <div style="font-size: 16px; font-weight: 700; color: #a78bfa;">Agent</div>
+      <div style="font-size: 11px; color: #888; margin-top: 4px;">Orchestrator</div>
+    </div>
+    <div style="display: flex; align-items: center; color: #444; font-size: 24px;">→</div>
+    <div style="background: #1e1e3e; border: 2px solid #2563eb; border-radius: 12px; padding: 16px 24px; text-align: center; min-width: 120px;">
+      <div style="font-size: 28px; margin-bottom: 4px;">🔧</div>
+      <div style="font-size: 16px; font-weight: 700; color: #60a5fa;">Tool</div>
+      <div style="font-size: 11px; color: #888; margin-top: 4px;">Actions</div>
+    </div>
+    <div style="display: flex; align-items: center; color: #444; font-size: 24px;">→</div>
+    <div style="background: #1e1e3e; border: 2px solid #059669; border-radius: 12px; padding: 16px 24px; text-align: center; min-width: 120px;">
+      <div style="font-size: 28px; margin-bottom: 4px;">🧠</div>
+      <div style="font-size: 16px; font-weight: 700; color: #34d399;">Memory</div>
+      <div style="font-size: 11px; color: #888; margin-top: 4px;">Persistence</div>
+    </div>
+    <div style="display: flex; align-items: center; color: #444; font-size: 24px;">→</div>
+    <div style="background: #1e1e3e; border: 2px solid #d97706; border-radius: 12px; padding: 16px 24px; text-align: center; min-width: 120px;">
+      <div style="font-size: 28px; margin-bottom: 4px;">👥</div>
+      <div style="font-size: 16px; font-weight: 700; color: #fbbf24;">Team</div>
+      <div style="font-size: 11px; color: #888; margin-top: 4px;">Coordination</div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 20px;">
+    <span style="font-size: 12px; color: #666;">That's it. 4 concepts. Not 100+ classes.</span>
+  </div>
+</div>
 
 ### Agent
 
@@ -39,7 +83,7 @@ import { Agent, Memory, Tool } from '@avee1234/agent-kit';
 
 const agent = new Agent({
   name: 'research-assistant',
-  model: 'ollama/llama3',  // any OpenAI-compatible endpoint
+  model: { provider: 'ollama', model: 'llama3' },
   memory: new Memory({ store: 'sqlite' }),
   tools: [searchTool, saveNoteTool],
   system: 'You are a research assistant.',
@@ -50,7 +94,7 @@ const response = await agent.chat('Find recent papers on transformers');
 
 ### Tool
 
-Tools are just functions with a schema attached. You can define them inline or from an existing function.
+Tools are just functions with a schema attached:
 
 ```typescript
 const weatherTool = Tool.create({
@@ -65,41 +109,26 @@ const weatherTool = Tool.create({
 });
 ```
 
-The `execute` function gets fully-typed parameters based on the schema you define. No casting, no `any`.
-
 ### Memory
 
 This is the piece I spent the most time on, and the one I'm most proud of.
 
 ```typescript
-// Zero-config local (SQLite)
-const memory = new Memory({ store: 'sqlite' });
-
-// With semantic search (embeddings)
-const memory = new Memory({
-  store: 'sqlite',
-  embedding: { provider: 'ollama', model: 'nomic-embed-text' },
-});
-
-// In-memory for tests
-const memory = new Memory({ store: 'memory' });
+new Memory({ store: 'sqlite' })                    // persistent, zero-config
+new Memory({ store: 'sqlite', embedding: adapter }) // + semantic search
+new Memory({ store: 'postgres', url: DATABASE_URL }) // production-grade
+new Memory()                                         // in-memory for tests
 ```
-
-Memory handles two things: conversation history (short-term) and a vector store for semantic retrieval across sessions (long-term). By default it uses keyword search. If you provide an embedding model, it upgrades to semantic similarity search automatically.
 
 ### Team
 
-Multi-agent coordination without the boilerplate.
+Multi-agent coordination without the boilerplate:
 
 ```typescript
-const researcher = new Agent({ name: 'researcher', tools: [searchTool] });
-const writer = new Agent({ name: 'writer', tools: [saveTool] });
-
 const team = new Team({
   agents: [researcher, writer],
   strategy: 'sequential',
 });
-
 await team.run('Research AI frameworks and write a summary');
 ```
 
@@ -109,32 +138,62 @@ await team.run('Research AI frameworks and write a summary');
 
 The thing that made this feel real was watching an agent remember context after a full process restart.
 
-Here's what that looks like in practice:
-
-```typescript
-// Session 1
-const agent = new Agent({
-  name: 'assistant',
-  memory: new Memory({ store: 'sqlite', path: './agent-memory.db' }),
-});
-
-await agent.chat("My project uses PostgreSQL and we deploy to Fly.io");
-// Agent responds, stores this in long-term memory
-process.exit(0);
-
-// Session 2 — completely new process
-const agent = new Agent({
-  name: 'assistant',
-  memory: new Memory({ store: 'sqlite', path: './agent-memory.db' }),
-});
-
-await agent.chat("What database am I using?");
-// "Based on our previous conversation, you're using PostgreSQL."
-```
+<div style="background: #0f0f23; border-radius: 16px; padding: 0; margin: 24px 0; overflow: hidden; border: 1px solid #2a2a4a;">
+  <!-- Session 1 -->
+  <div style="padding: 20px 24px; border-bottom: 1px solid #2a2a4a;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+      <div style="width: 10px; height: 10px; border-radius: 50%; background: #34d399;"></div>
+      <span style="font-size: 13px; color: #34d399; font-weight: 600;">SESSION 1 — Running</span>
+    </div>
+    <div style="font-family: monospace; font-size: 13px; line-height: 1.8;">
+      <div><span style="color: #60a5fa;">❯</span> <span style="color: #e2e8f0;">agent.chat("My project uses PostgreSQL, deployed on Fly.io")</span></div>
+      <div style="color: #a0a0b0; padding-left: 16px;">→ "Got it! I'll remember your stack: PostgreSQL + Fly.io"</span></div>
+      <div style="margin-top: 8px;"><span style="color: #60a5fa;">❯</span> <span style="color: #e2e8f0;">process.exit(0)</span></div>
+    </div>
+  </div>
+  <!-- Kill -->
+  <div style="padding: 12px 24px; background: linear-gradient(90deg, #1a0a0a, #0f0f23); border-bottom: 1px solid #2a2a4a;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="width: 10px; height: 10px; border-radius: 50%; background: #e94560;"></div>
+      <span style="font-size: 13px; color: #e94560; font-weight: 600;">PROCESS KILLED</span>
+      <span style="font-size: 12px; color: #666; margin-left: auto;">memory.db persists on disk →</span>
+    </div>
+  </div>
+  <!-- Session 2 -->
+  <div style="padding: 20px 24px;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+      <div style="width: 10px; height: 10px; border-radius: 50%; background: #34d399;"></div>
+      <span style="font-size: 13px; color: #34d399; font-weight: 600;">SESSION 2 — New Process</span>
+    </div>
+    <div style="font-family: monospace; font-size: 13px; line-height: 1.8;">
+      <div><span style="color: #60a5fa;">❯</span> <span style="color: #e2e8f0;">agent.chat("What database am I using?")</span></div>
+      <div style="color: #34d399; padding-left: 16px; font-weight: 600;">→ "Based on our previous conversation, you're using PostgreSQL,</div>
+      <div style="color: #34d399; padding-left: 28px; font-weight: 600;">deployed on Fly.io."</div>
+    </div>
+  </div>
+</div>
 
 Kill the process, restart it, same SQLite file — the agent picks up where it left off. No manual serialization, no session IDs to manage. It just works because memory is a first-class concept, not an afterthought.
 
-With embeddings enabled, the retrieval also becomes semantic. Ask "what's my infra setup?" and it pulls the PostgreSQL + Fly.io context even though those exact words weren't in your query.
+<div style="background: linear-gradient(135deg, #0a1628 0%, #0f0f23 100%); border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #1e3a5f;">
+  <div style="font-size: 13px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">How Memory Works Under the Hood</div>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch;">
+    <div style="flex: 1; min-width: 180px; background: #111827; border-radius: 10px; padding: 16px; border: 1px solid #1f2937;">
+      <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Short-Term</div>
+      <div style="font-size: 14px; color: #e5e7eb; line-height: 1.5;">Sliding window of last 20 messages. Always in context.</div>
+    </div>
+    <div style="display: flex; align-items: center; color: #374151; font-size: 20px;">→</div>
+    <div style="flex: 1; min-width: 180px; background: #111827; border-radius: 10px; padding: 16px; border: 1px solid #1f2937;">
+      <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Summarization</div>
+      <div style="font-size: 14px; color: #e5e7eb; line-height: 1.5;">Old messages auto-summarized by the model and stored.</div>
+    </div>
+    <div style="display: flex; align-items: center; color: #374151; font-size: 20px;">→</div>
+    <div style="flex: 1; min-width: 180px; background: #111827; border-radius: 10px; padding: 16px; border: 1px solid #1f2937;">
+      <div style="font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Long-Term</div>
+      <div style="font-size: 14px; color: #e5e7eb; line-height: 1.5;">Semantic search over summaries. Keyword or embedding-based.</div>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -142,57 +201,177 @@ With embeddings enabled, the retrieval also becomes semantic. Ask "what's my inf
 
 The `Team` class supports four coordination strategies. Each maps to a real pattern you'd use in production:
 
-**Sequential** — agents run one after another, each receiving the previous agent's output. Good for pipelines: researcher → analyst → writer.
-
-**Parallel** — agents run simultaneously on the same task, results are merged. Good for tasks where multiple perspectives add value (e.g., multiple reviewers on a PR).
-
-**Debate** — agents argue positions back and forth for N rounds, then a final agent synthesizes the best answer. Useful when you want adversarial quality checks.
-
-**Hierarchical** — a manager agent breaks the task into subtasks and delegates to specialist agents. Closest to how you'd structure a human team.
-
-```typescript
-// Debate strategy: two agents argue, one synthesizes
-const team = new Team({
-  agents: [optimistAgent, skepticAgent, synthesizerAgent],
-  strategy: 'debate',
-  rounds: 3,
-});
-```
+<div style="background: #0f0f23; border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #2a2a4a;">
+  <!-- Sequential -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #1a1a3e;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="background: #7c3aed; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px;">Sequential</span>
+      <span style="color: #888; font-size: 13px;">Pipeline — each agent builds on the previous</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+      <div style="background: #1e1e3e; border: 1px solid #7c3aed; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #a78bfa; font-weight: 600;">Researcher</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #1e1e3e; border: 1px solid #7c3aed; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #a78bfa; font-weight: 600;">Analyst</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #1e1e3e; border: 1px solid #7c3aed; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #a78bfa; font-weight: 600;">Writer</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #7c3aed; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: white; font-weight: 600;">Output</div>
+    </div>
+  </div>
+  <!-- Parallel -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #1a1a3e;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="background: #2563eb; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px;">Parallel</span>
+      <span style="color: #888; font-size: 13px;">Multiple perspectives on the same input</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="background: #1e1e3e; border: 1px solid #2563eb; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #60a5fa; font-weight: 600;">Security Review</div>
+        <div style="background: #1e1e3e; border: 1px solid #2563eb; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #60a5fa; font-weight: 600;">Style Review</div>
+        <div style="background: #1e1e3e; border: 1px solid #2563eb; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #60a5fa; font-weight: 600;">Perf Review</div>
+      </div>
+      <span style="color: #444; font-size: 18px;">⟹</span>
+      <div style="background: #2563eb; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: white; font-weight: 600;">Merged Output</div>
+    </div>
+  </div>
+  <!-- Debate -->
+  <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #1a1a3e;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="background: #059669; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px;">Debate</span>
+      <span style="color: #888; font-size: 13px;">Adversarial refinement across rounds</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; flex-wrap: wrap;">
+      <div style="background: #1e1e3e; border: 1px solid #059669; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: #34d399;">Proposer: draft</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #1e1e3e; border: 1px solid #059669; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: #34d399;">Critic: feedback</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #1e1e3e; border: 1px solid #059669; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: #34d399;">Proposer: revise</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #1e1e3e; border: 1px solid #059669; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: #34d399;">Critic: approve</div>
+      <span style="color: #444;">→</span>
+      <div style="background: #059669; border-radius: 8px; padding: 6px 12px; font-size: 12px; color: white; font-weight: 600;">Final</div>
+    </div>
+  </div>
+  <!-- Hierarchical -->
+  <div>
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="background: #d97706; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px;">Hierarchical</span>
+      <span style="color: #888; font-size: 13px;">Manager delegates to specialists</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0;">
+      <div style="background: #d97706; border-radius: 8px; padding: 8px 20px; font-size: 13px; color: white; font-weight: 600;">Manager</div>
+      <div style="color: #444; font-size: 14px;">↙ ↓ ↘</div>
+      <div style="display: flex; gap: 8px;">
+        <div style="background: #1e1e3e; border: 1px solid #d97706; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #fbbf24; font-weight: 600;">Researcher</div>
+        <div style="background: #1e1e3e; border: 1px solid #d97706; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #fbbf24; font-weight: 600;">Writer</div>
+        <div style="background: #1e1e3e; border: 1px solid #d97706; border-radius: 8px; padding: 6px 14px; font-size: 13px; color: #fbbf24; font-weight: 600;">Critic</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 Each strategy is about 80–100 lines of TypeScript. They're not magic — they're just structured conversation patterns.
+
+```typescript
+// Debate strategy: proposer drafts, critic refines
+const team = new Team({
+  agents: [proposerAgent, criticAgent],
+  strategy: 'debate',
+  maxRounds: 3,
+});
+```
 
 ---
 
 ## Built-In Observability
 
-One thing I didn't want to add a paid service to get: knowing what your agent is actually doing.
+One thing I didn't want to pay for: knowing what your agent is actually doing.
 
-Every agent emits events you can subscribe to:
+<div style="background: #0f0f23; border-radius: 12px; padding: 20px 24px; margin: 24px 0; font-family: monospace; font-size: 13px; line-height: 1.8; border: 1px solid #2a2a4a;">
+  <div style="color: #888; margin-bottom: 4px;">// Subscribe to everything</div>
+  <div style="color: #e2e8f0;">agent.on('*', (e) => console.log(e));</div>
+  <div style="margin: 12px 0; border-top: 1px solid #1a1a3e;"></div>
+  <div><span style="color: #fbbf24;">tool:start</span> <span style="color: #888;">web_search({ query: "mamba architecture" })</span></div>
+  <div><span style="color: #34d399;">tool:end  </span> <span style="color: #888;">web_search → 340ms</span></div>
+  <div><span style="color: #60a5fa;">message  </span> <span style="color: #888;">"I found 3 papers on Mamba..." → 1204ms, 87 tokens</span></div>
+  <div><span style="color: #a78bfa;">memory   </span> <span style="color: #888;">retrieved 2 summaries, saved exchange</span></div>
+</div>
 
-```typescript
-agent.on('step', (step) => {
-  console.log(`[${step.type}] ${step.description} — ${step.latencyMs}ms, ${step.tokens} tokens`);
-});
+No LangSmith, no third-party tracing service, no credit card. It's just `EventEmitter` under the hood — pipe it to whatever logging system you already use.
 
-// Output:
-// [tool_call] get_weather({ city: "London" }) — 342ms, 0 tokens
-// [llm_response] "The weather in London is..." — 1204ms, 87 tokens
-```
+---
 
-No LangSmith, no third-party tracing service, no credit card required. It's just Node.js `EventEmitter` under the hood, which means you can pipe it to whatever logging/monitoring system you already use.
+## The Comparison
+
+<div style="background: #0f0f23; border-radius: 16px; overflow: hidden; margin: 24px 0; border: 1px solid #2a2a4a;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+    <thead>
+      <tr style="background: #1a1a3e;">
+        <th style="padding: 12px 16px; text-align: left; color: #888; font-weight: 600; border-bottom: 1px solid #2a2a4a;"></th>
+        <th style="padding: 12px 16px; text-align: center; color: #888; font-weight: 600; border-bottom: 1px solid #2a2a4a;">LangChain</th>
+        <th style="padding: 12px 16px; text-align: center; color: #888; font-weight: 600; border-bottom: 1px solid #2a2a4a;">Vercel AI SDK</th>
+        <th style="padding: 12px 16px; text-align: center; color: #888; font-weight: 600; border-bottom: 1px solid #2a2a4a;">CrewAI</th>
+        <th style="padding: 12px 16px; text-align: center; color: #60a5fa; font-weight: 700; border-bottom: 1px solid #2a2a4a;">agent-kit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 10px 16px; color: #e5e7eb; border-bottom: 1px solid #1a1a3e;">Language</td>
+        <td style="padding: 10px 16px; text-align: center; color: #a0a0b0; border-bottom: 1px solid #1a1a3e;">Python-first</td>
+        <td style="padding: 10px 16px; text-align: center; color: #a0a0b0; border-bottom: 1px solid #1a1a3e;">TypeScript</td>
+        <td style="padding: 10px 16px; text-align: center; color: #a0a0b0; border-bottom: 1px solid #1a1a3e;">Python</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; font-weight: 600; border-bottom: 1px solid #1a1a3e;">TypeScript-first</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; color: #e5e7eb; border-bottom: 1px solid #1a1a3e;">Learning curve</td>
+        <td style="padding: 10px 16px; text-align: center; color: #e94560; border-bottom: 1px solid #1a1a3e;">100+ classes</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; border-bottom: 1px solid #1a1a3e;">Low</td>
+        <td style="padding: 10px 16px; text-align: center; color: #fbbf24; border-bottom: 1px solid #1a1a3e;">Medium</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; font-weight: 600; border-bottom: 1px solid #1a1a3e;">4 concepts</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; color: #e5e7eb; border-bottom: 1px solid #1a1a3e;">Memory</td>
+        <td style="padding: 10px 16px; text-align: center; color: #fbbf24; border-bottom: 1px solid #1a1a3e;">Manual setup</td>
+        <td style="padding: 10px 16px; text-align: center; color: #e94560; border-bottom: 1px solid #1a1a3e;">None</td>
+        <td style="padding: 10px 16px; text-align: center; color: #fbbf24; border-bottom: 1px solid #1a1a3e;">Basic</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; font-weight: 600; border-bottom: 1px solid #1a1a3e;">Built-in + semantic</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; color: #e5e7eb; border-bottom: 1px solid #1a1a3e;">Multi-agent</td>
+        <td style="padding: 10px 16px; text-align: center; color: #fbbf24; border-bottom: 1px solid #1a1a3e;">LangGraph (separate)</td>
+        <td style="padding: 10px 16px; text-align: center; color: #e94560; border-bottom: 1px solid #1a1a3e;">None</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; border-bottom: 1px solid #1a1a3e;">Core feature</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; font-weight: 600; border-bottom: 1px solid #1a1a3e;">4 strategies built-in</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px 16px; color: #e5e7eb;">Observability</td>
+        <td style="padding: 10px 16px; text-align: center; color: #e94560;">LangSmith (paid)</td>
+        <td style="padding: 10px 16px; text-align: center; color: #e94560;">None</td>
+        <td style="padding: 10px 16px; text-align: center; color: #fbbf24;">Basic</td>
+        <td style="padding: 10px 16px; text-align: center; color: #34d399; font-weight: 600;">Built-in, free</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
 ## What I'd Do Differently
 
-**1. Ship the monolith first, split packages later.**
-I started with a monorepo (separate packages for `core`, `memory-sqlite`, `memory-postgres`) before I had a working v1. That made early iteration slower than it needed to be. A single package would have gotten to working faster, and splitting is easy once the API is stable.
-
-**2. Keyword search before embeddings.**
-I added embedding-based semantic search too early. For most use cases, keyword search over conversation history is fast and good enough. Embeddings add latency and an extra model dependency. I should have shipped keyword search as the default, with embeddings as an explicit opt-in — which is now how the API works, but only after I went back and changed it.
-
-**3. Write tests before writing the API.**
-I wrote most of the implementation first, then backfilled tests. The places where tests felt hard to write were places where the API design was wrong. TDD would have caught those earlier.
+<div style="display: flex; flex-direction: column; gap: 12px; margin: 24px 0;">
+  <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #7c3aed;">
+    <div style="font-size: 15px; font-weight: 700; color: #a78bfa; margin-bottom: 6px;">1. Ship the monolith first, split packages later</div>
+    <div style="font-size: 14px; color: #a0a0b0; line-height: 1.6;">I initially considered a monorepo before I had a working v1. A single package got to "working" faster, and the internal plugin boundaries (like the <code>MemoryStore</code> interface) mean I can split later without breaking anyone.</div>
+  </div>
+  <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #2563eb;">
+    <div style="font-size: 15px; font-weight: 700; color: #60a5fa; margin-bottom: 6px;">2. Keyword search before embeddings</div>
+    <div style="font-size: 14px; color: #a0a0b0; line-height: 1.6;">For most use cases, keyword search over conversation summaries is fast and good enough. Embeddings add latency and an extra model dependency. I shipped keyword first, embeddings as opt-in — but only after going back and changing it.</div>
+  </div>
+  <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #059669;">
+    <div style="font-size: 15px; font-weight: 700; color: #34d399; margin-bottom: 6px;">3. TDD from the start</div>
+    <div style="font-size: 14px; color: #a0a0b0; line-height: 1.6;">The places where tests felt hard to write were places where the API design was wrong. Writing tests first would have caught those earlier. The final version has 138 tests — I wish I'd written them before the code, not after.</div>
+  </div>
+</div>
 
 ---
 
@@ -208,6 +387,29 @@ Or scaffold a new project:
 npx @avee1234/agent-kit init my-agent
 ```
 
-The [GitHub repo](https://github.com/abhid1234/agent-kit) has examples for a research agent, customer support bot, code reviewer, and multi-agent research team.
+<div style="background: linear-gradient(135deg, #0a1628 0%, #0f0f23 100%); border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #1e3a5f; text-align: center;">
+  <div style="font-size: 16px; color: #e5e7eb; margin-bottom: 16px;">4 examples to get started</div>
+  <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <div style="background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 10px 16px;">
+      <div style="font-size: 13px; color: #60a5fa; font-weight: 600;">research-assistant</div>
+      <div style="font-size: 11px; color: #888;">Agent + Tool + Memory</div>
+    </div>
+    <div style="background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 10px 16px;">
+      <div style="font-size: 13px; color: #fbbf24; font-weight: 600;">research-team</div>
+      <div style="font-size: 11px; color: #888;">Hierarchical Team</div>
+    </div>
+    <div style="background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 10px 16px;">
+      <div style="font-size: 13px; color: #34d399; font-weight: 600;">customer-support</div>
+      <div style="font-size: 11px; color: #888;">Debate Strategy</div>
+    </div>
+    <div style="background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 10px 16px;">
+      <div style="font-size: 13px; color: #a78bfa; font-weight: 600;">code-reviewer</div>
+      <div style="font-size: 11px; color: #888;">Parallel Strategy</div>
+    </div>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://github.com/abhid1234/agent-kit" style="color: #60a5fa; font-size: 14px;">github.com/abhid1234/agent-kit</a>
+  </div>
+</div>
 
 If you've been frustrated with LangChain's complexity or Vercel AI SDK's lack of memory, give it a shot and let me know what you think. Issues and PRs welcome.
