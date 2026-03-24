@@ -42,7 +42,8 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
       const errorText = await response.text();
       throw new Error(`Model API error (${response.status}): ${errorText}`);
     }
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json();
     const choice = data.choices[0].message;
     const result: ModelResponse = { content: choice.content ?? '' };
     if (choice.tool_calls?.length) {
