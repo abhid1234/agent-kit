@@ -2,6 +2,10 @@
 
 TypeScript-first library for building stateful, persistent AI agents.
 
+<p align="center">
+  <img src="assets/demo.svg" alt="agent-kit demo — memory persists across sessions" width="750" />
+</p>
+
 ## Why agent-kit?
 
 - **Persistent memory across sessions** — SQLite store keeps conversation history and auto-summarizes old exchanges. Restart your process; the agent still remembers.
@@ -12,13 +16,13 @@ TypeScript-first library for building stateful, persistent AI agents.
 ## Installation
 
 ```bash
-npm install agent-kit
+npm install @avee1234/agent-kit
 ```
 
 ## Quick Start
 
 ```typescript
-import { Agent, Tool, Memory } from 'agent-kit';
+import { Agent, Tool, Memory } from '@avee1234/agent-kit';
 
 const echo = Tool.create({
   name: 'echo',
@@ -67,7 +71,7 @@ Kill the process and restart — memory persists in `research.db`.
 The main class. Runs a tool-calling loop, manages memory context, and emits observability events.
 
 ```typescript
-import { Agent } from 'agent-kit';
+import { Agent } from '@avee1234/agent-kit';
 
 const agent = new Agent({
   name: 'assistant',
@@ -99,7 +103,7 @@ const agent = new Agent({
 Wraps a function so the agent can call it.
 
 ```typescript
-import { Tool } from 'agent-kit';
+import { Tool } from '@avee1234/agent-kit';
 
 const getWeather = Tool.create({
   name: 'get_weather',
@@ -130,7 +134,7 @@ const getWeather = Tool.create({
 Manages conversation persistence and context retrieval.
 
 ```typescript
-import { Memory } from 'agent-kit';
+import { Memory } from '@avee1234/agent-kit';
 
 // In-memory (default, testing)
 new Memory()
@@ -160,7 +164,7 @@ Auto-summarization: when `summarizeAfter` messages accumulate, the agent summari
 If you omit `model`, the agent uses `MockAdapter` — it echoes inputs and simulates tool calls. Useful for testing.
 
 ```typescript
-import { MockAdapter } from 'agent-kit';
+import { MockAdapter } from '@avee1234/agent-kit';
 
 const agent = new Agent({ name: 'test', model: new MockAdapter() });
 ```
@@ -180,7 +184,7 @@ const agent = new Agent({
 Works with Together AI, OpenRouter, Anyscale, LM Studio, and any other OpenAI-compatible API.
 
 ```typescript
-import { OpenAICompatibleAdapter } from 'agent-kit';
+import { OpenAICompatibleAdapter } from '@avee1234/agent-kit';
 
 const agent = new Agent({
   name: 'agent',
@@ -238,8 +242,8 @@ All events include `type`, `timestamp`, and `agentId` fields from `AgentEvent`.
 Implement the `MemoryStore` interface to plug in any storage backend (PostgreSQL, Redis, DynamoDB, etc.).
 
 ```typescript
-import type { MemoryStore } from 'agent-kit';
-import type { Message, Summary } from 'agent-kit';
+import type { MemoryStore } from '@avee1234/agent-kit';
+import type { Message, Summary } from '@avee1234/agent-kit';
 
 class MyStore implements MemoryStore {
   async saveMessages(agentId: string, messages: Message[]): Promise<void> {

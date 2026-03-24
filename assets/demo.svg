@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="520" viewBox="0 0 750 520">
+  <style>
+    .bg { fill: #1e1e2e; }
+    .titlebar { fill: #313244; }
+    .btn-close { fill: #f38ba8; }
+    .btn-min { fill: #f9e2af; }
+    .btn-max { fill: #a6e3a1; }
+    .prompt { fill: #89b4fa; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .input { fill: #cdd6f4; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .output { fill: #a6adc8; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .tool { fill: #f9e2af; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .title { fill: #cdd6f4; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 13px; }
+    .dim { fill: #585b70; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .green { fill: #a6e3a1; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+    .separator { fill: #585b70; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; }
+  </style>
+
+  <!-- Window -->
+  <rect class="bg" width="750" height="520" rx="10" />
+  <rect class="titlebar" width="750" height="36" rx="10" />
+  <rect class="titlebar" y="26" width="750" height="10" />
+
+  <!-- Window buttons -->
+  <circle class="btn-close" cx="20" cy="18" r="6" />
+  <circle class="btn-min" cx="40" cy="18" r="6" />
+  <circle class="btn-max" cx="60" cy="18" r="6" />
+  <text class="title" x="340" y="22" text-anchor="middle">research-assistant</text>
+
+  <!-- Session 1 -->
+  <text class="dim" x="20" y="65">Research Assistant (type "quit" to exit)</text>
+
+  <text class="prompt" x="20" y="95">&gt;</text>
+  <text class="input" x="35" y="95">Find recent papers on transformer alternatives</text>
+
+  <text class="tool" x="20" y="125">  [web_search] searching...</text>
+  <text class="tool" x="20" y="145">  [web_search] done (340ms)</text>
+
+  <text class="output" x="20" y="175">I found several papers on transformer alternatives:</text>
+  <text class="output" x="20" y="195">1. "Mamba: Linear-Time Sequence Modeling" - Gu &amp; Dao</text>
+  <text class="output" x="20" y="215">2. "RWKV: Reinventing RNNs for the Transformer Era"</text>
+  <text class="output" x="20" y="235">3. "Hyena Hierarchy" - Poli et al.</text>
+  <text class="output" x="20" y="255">I've saved these to your notes.</text>
+
+  <text class="prompt" x="20" y="285">&gt;</text>
+  <text class="input" x="35" y="285">quit</text>
+
+  <!-- Separator -->
+  <text class="separator" x="20" y="315">───── process killed, restarted ─────</text>
+
+  <!-- Session 2 -->
+  <text class="dim" x="20" y="345">Research Assistant (type "quit" to exit)</text>
+
+  <text class="prompt" x="20" y="375">&gt;</text>
+  <text class="input" x="35" y="375">What was I researching last time?</text>
+
+  <text class="green" x="20" y="405">You were looking into transformer alternatives. I found</text>
+  <text class="green" x="20" y="425">papers on Mamba, RWKV, and Hyena Hierarchy. Want me to</text>
+  <text class="green" x="20" y="445">dig deeper into any of them?</text>
+
+  <!-- Caption -->
+  <text class="dim" x="375" y="490" text-anchor="middle">▲ Memory persists across sessions — powered by agent-kit</text>
+</svg>
