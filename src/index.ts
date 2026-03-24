@@ -23,6 +23,8 @@ export type { OllamaEmbeddingConfig } from './model/ollama-embedding';
 export type { MemoryStore } from './store/interface';
 export { InMemoryStore } from './store/in-memory';
 export { SQLiteStore } from './store/sqlite';
+export { PostgresStore } from './store/postgres';
+export type { PostgresConfig } from './store/postgres';
 
 // Events
 export { AgentEventEmitter } from './events';
