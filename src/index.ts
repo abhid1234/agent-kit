@@ -15,6 +15,9 @@ export type { ModelAdapter } from './model/adapter';
 export { MockAdapter } from './model/mock';
 export { OpenAICompatibleAdapter } from './model/openai-compatible';
 export type { OpenAIAdapterConfig } from './model/openai-compatible';
+export type { EmbeddingAdapter } from './model/embedding-adapter';
+export { OllamaEmbeddingAdapter } from './model/ollama-embedding';
+export type { OllamaEmbeddingConfig } from './model/ollama-embedding';
 
 // Storage
 export type { MemoryStore } from './store/interface';

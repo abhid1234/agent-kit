@@ -91,4 +91,64 @@ describe('InMemoryStore', () => {
       expect(results).toHaveLength(1);
     });
   });
+
+  describe('embeddings', () => {
+    it('saveEmbedding and searchByEmbedding return the most similar summary', async () => {
+      const summaryA = createSummary({ content: 'machine learning concepts' });
+      const summaryB = createSummary({ content: 'cooking recipes' });
+      await store.saveSummary('agent-1', summaryA);
+      await store.saveSummary('agent-1', summaryB);
+
+      // embedding A is close to query; embedding B is orthogonal
+      const embeddingA = [1, 0, 0];
+      const embeddingB = [0, 1, 0];
+      await store.saveEmbedding!('agent-1', summaryA.id, embeddingA);
+      await store.saveEmbedding!('agent-1', summaryB.id, embeddingB);
+
+      const query = [1, 0, 0]; // identical to embeddingA
+      const results = await store.searchByEmbedding!('agent-1', query, 1);
+      expect(results).toHaveLength(1);
+      expect(results[0].id).toBe(summaryA.id);
+    });
+
+    it('returns top N results by cosine similarity', async () => {
+      const summaries = [
+        createSummary({ content: 'alpha' }),
+        createSummary({ content: 'beta' }),
+        createSummary({ content: 'gamma' }),
+      ];
+      const embeddings = [
+        [0.9, 0.1],
+        [0.8, 0.2],
+        [0.1, 0.9],
+      ];
+      for (let i = 0; i < summaries.length; i++) {
+        await store.saveSummary('agent-1', summaries[i]);
+        await store.saveEmbedding!('agent-1', summaries[i].id, embeddings[i]);
+      }
+
+      const query = [1, 0]; // aligned with first two
+      const results = await store.searchByEmbedding!('agent-1', query, 2);
+      expect(results).toHaveLength(2);
+      // The top-2 should be summaries[0] and summaries[1] (highest similarity)
+      const ids = results.map((r) => r.id);
+      expect(ids).toContain(summaries[0].id);
+      expect(ids).toContain(summaries[1].id);
+    });
+
+    it('returns empty array when no embeddings stored', async () => {
+      const results = await store.searchByEmbedding!('agent-1', [1, 0], 5);
+      expect(results).toEqual([]);
+    });
+
+    it('isolates embeddings by agentId', async () => {
+      const summary = createSummary({ content: 'topic' });
+      await store.saveSummary('agent-1', summary);
+      await store.saveEmbedding!('agent-1', summary.id, [1, 0, 0]);
+
+      // Searching under a different agent should return nothing
+      const results = await store.searchByEmbedding!('agent-2', [1, 0, 0], 5);
+      expect(results).toEqual([]);
+    });
+  });
 });

@@ -6,4 +6,8 @@ export interface MemoryStore {
   getRecentMessages(agentId: string, limit: number): Promise<Message[]>;
   saveSummary(agentId: string, summary: Summary): Promise<void>;
   searchSummaries(agentId: string, query: string, limit: number): Promise<Summary[]>;
+
+  // Optional embedding methods — stores that support vectors implement these
+  saveEmbedding?(agentId: string, summaryId: string, embedding: number[]): Promise<void>;
+  searchByEmbedding?(agentId: string, embedding: number[], limit: number): Promise<Summary[]>;
 }
