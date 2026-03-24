@@ -18,7 +18,7 @@ export interface AgentConfig {
 }
 
 export class Agent {
-  private name: string;
+  readonly name: string;
   private model: ModelAdapter;
   private memory?: Memory;
   private tools: Tool[];
@@ -65,6 +65,10 @@ export class Agent {
 
   private isModelAdapter(obj: ModelAdapter | ModelConfig): obj is ModelAdapter {
     return typeof (obj as ModelAdapter).chat === 'function';
+  }
+
+  getModel(): ModelAdapter {
+    return this.model;
   }
 
   on(type: string, handler: (event: AgentEvent) => void): void {
