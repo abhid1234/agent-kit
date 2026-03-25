@@ -1,17 +1,25 @@
 'use client';
 
 import { useRef, useEffect, useState, KeyboardEvent } from 'react';
-import { ChatMessage } from '@/lib/types';
+import { ChatMessage, ActivityItem } from '@/lib/types';
 import { MessageBubble } from './MessageBubble';
+import { ActivityCard } from './ActivityCard';
 
 interface ChatPanelProps {
   messages: ChatMessage[];
   streamingMessage?: string;
   isLoading: boolean;
   onSend: (text: string) => void;
+  activities?: ActivityItem[];
 }
 
-export function ChatPanel({ messages, streamingMessage, isLoading, onSend }: ChatPanelProps) {
+export function ChatPanel({
+  messages,
+  streamingMessage,
+  isLoading,
+  onSend,
+  activities = [],
+}: ChatPanelProps) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -71,8 +79,23 @@ export function ChatPanel({ messages, streamingMessage, isLoading, onSend }: Cha
           />
         )}
 
+        {/* Activity cards — show tool calls and memory ops in real-time */}
+        {activities.length > 0 && (
+          <div className="flex flex-col gap-1.5 animate-fade-in">
+            {activities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                type={activity.type}
+                name={activity.name}
+                detail={activity.detail}
+                latencyMs={activity.latencyMs}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Loading indicator (before streaming starts) */}
-        {isLoading && !streamingMessage && (
+        {isLoading && !streamingMessage && activities.length === 0 && (
           <div className="flex items-start gap-2 animate-fade-in">
             <div className="flex items-center gap-1 px-4 py-2.5 rounded-2xl rounded-bl-md bg-bg-card border border-border-subtle">
               <span

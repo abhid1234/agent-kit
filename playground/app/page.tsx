@@ -3,7 +3,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { v4 as uuidv4 } from 'uuid';
-import { AgentType, ChatMessage, StreamEvent, SessionInfo, MemoryStats } from '@/lib/types';
+import {
+  AgentType,
+  ChatMessage,
+  StreamEvent,
+  SessionInfo,
+  MemoryStats,
+  ActivityItem,
+} from '@/lib/types';
 import { TopBar } from '@/components/TopBar';
 import { ChatPanel } from '@/components/ChatPanel';
 import { EventsPanel } from '@/components/EventsPanel';
@@ -23,6 +30,7 @@ export default function Home() {
   const [streamingMessage, setStreamingMessage] = useState<string>('');
   const [messageCount, setMessageCount] = useState(0);
   const [limitReached, setLimitReached] = useState(false);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
   const FREE_TIER_LIMIT = 50;
 
   // Initialize session on mount
@@ -87,6 +95,7 @@ export default function Home() {
       setMessages((prev) => [...prev, userMsg]);
       setIsLoading(true);
       setStreamingMessage('');
+      setActivities([]);
 
       try {
         const res = await fetch('/api/chat', {
@@ -132,6 +141,7 @@ export default function Home() {
                 };
                 setMessages((prev) => [...prev, assistantMsg]);
                 setStreamingMessage('');
+                setActivities([]);
                 // Increment local message count for anonymous users after a successful response
                 if (!isSignedIn) {
                   setMessageCount((prev) => prev + 1);
@@ -157,6 +167,48 @@ export default function Home() {
             if (kind === 'event') {
               const event = parsed.event as StreamEvent;
               setEvents((prev) => [...prev, event]);
+
+              // Track activities for inline display in chat
+              if (event.type === 'tool:start') {
+                const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                setActivities((prev) => [
+                  ...prev,
+                  {
+                    id: uuidv4(),
+                    type: 'tool_running',
+                    name: `Running ${toolName}`,
+                    detail: event.data.arguments
+                      ? String(event.data.arguments).slice(0, 80)
+                      : undefined,
+                    timestamp: event.timestamp,
+                  },
+                ]);
+              } else if (event.type === 'tool:end') {
+                const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                setActivities((prev) =>
+                  prev.map((a) =>
+                    a.type === 'tool_running' && a.name === `Running ${toolName}`
+                      ? {
+                          ...a,
+                          type: 'tool_complete' as const,
+                          name: `${toolName} complete`,
+                          latencyMs: event.latencyMs,
+                        }
+                      : a,
+                  ),
+                );
+              } else if (event.type === 'memory:retrieve') {
+                setActivities((prev) => [
+                  ...prev,
+                  {
+                    id: uuidv4(),
+                    type: 'memory_retrieve',
+                    name: 'Retrieving memory',
+                    detail: `${event.data.recentMessages ?? 0} messages, ${event.data.relevantSummaries ?? 0} summaries`,
+                    timestamp: event.timestamp,
+                  },
+                ]);
+              }
             } else if (kind === 'response') {
               const content = parsed.content as string;
               accumulatedContent = content;
@@ -217,6 +269,7 @@ export default function Home() {
             streamingMessage={streamingMessage || undefined}
             isLoading={isLoading}
             onSend={handleSend}
+            activities={activities}
           />
         </div>
 

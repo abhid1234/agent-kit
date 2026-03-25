@@ -40,6 +40,15 @@ export interface MemoryStats {
   notes: Array<{ title: string; content: string }>;
 }
 
+export interface ActivityItem {
+  id: string;
+  type: 'tool_running' | 'tool_complete' | 'memory_retrieve' | 'memory_save' | 'thinking';
+  name: string;
+  detail?: string;
+  latencyMs?: number;
+  timestamp: number;
+}
+
 export const AGENT_LABELS: Record<AgentType, { label: string; icon: string }> = {
   'research-assistant': { label: 'Research Assistant', icon: '🔬' },
   'customer-support': { label: 'Customer Support', icon: '🛒' },
