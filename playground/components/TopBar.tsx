@@ -9,10 +9,10 @@ interface TopBarProps {
 }
 
 const AGENT_TYPES: AgentType[] = [
+  'travel-planner',
   'research-assistant',
   'customer-support',
   'code-reviewer',
-  'travel-planner',
 ];
 
 export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {

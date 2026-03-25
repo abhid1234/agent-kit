@@ -10,7 +10,7 @@ import { MemoryPanel } from '@/components/MemoryPanel';
 
 export default function Home() {
   const [session, setSession] = useState<SessionInfo | null>(null);
-  const [activeAgent, setActiveAgent] = useState<AgentType>('research-assistant');
+  const [activeAgent, setActiveAgent] = useState<AgentType>('travel-planner');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [events, setEvents] = useState<StreamEvent[]>([]);
   const [memoryStats, setMemoryStats] = useState<MemoryStats | null>(null);

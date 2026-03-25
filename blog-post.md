@@ -398,6 +398,42 @@ I deployed a live playground so you can try it without installing anything:
 
 The playground runs on **Google Cloud Run** (scales to zero, wakes up in seconds) with **Gemini 2.0 Flash** via **Google AI Studio** powering the AI responses. The combination of Cloud Run's serverless scaling and Gemini's speed makes the demo feel instant.
 
+### Try This: Plan a Trip in 60 Seconds
+
+The playground opens on the **Travel Planner** agent. Try this sequence:
+
+<div style="background: #0f0f23; border-radius: 16px; padding: 0; margin: 24px 0; overflow: hidden; border: 1px solid #2a2a4a;">
+  <div style="padding: 12px 24px; background: #111827; border-bottom: 1px solid #2a2a4a;">
+    <span style="font-size: 12px; color: #fbbf24; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Step-by-step demo — copy and paste each prompt</span>
+  </div>
+  <div style="padding: 20px 24px; font-family: monospace; font-size: 13px; line-height: 2.2;">
+    <div style="margin-bottom: 16px;">
+      <div style="color: #888; font-size: 11px; margin-bottom: 4px;">STEP 1 — Watch the search_destinations tool fire</div>
+      <div style="background: #1e3a5f; border-radius: 8px; padding: 8px 14px; display: inline-block; color: #e2e8f0;">Plan a 5-day trip to Tokyo in April</div>
+    </div>
+    <div style="margin-bottom: 16px;">
+      <div style="color: #888; font-size: 11px; margin-bottom: 4px;">STEP 2 — Watch the check_weather tool fire</div>
+      <div style="background: #1e3a5f; border-radius: 8px; padding: 8px 14px; display: inline-block; color: #e2e8f0;">What's the weather like there?</div>
+    </div>
+    <div style="margin-bottom: 16px;">
+      <div style="color: #888; font-size: 11px; margin-bottom: 4px;">STEP 3 — Watch the save_itinerary tool fire + memory panel updates</div>
+      <div style="background: #1e3a5f; border-radius: 8px; padding: 8px 14px; display: inline-block; color: #e2e8f0;">Save this itinerary for me</div>
+    </div>
+    <div style="margin-bottom: 16px;">
+      <div style="color: #888; font-size: 11px; margin-bottom: 4px;">STEP 4 — Close the tab. Reopen the playground. Then ask:</div>
+      <div style="background: #1e3a5f; border-radius: 8px; padding: 8px 14px; display: inline-block; color: #e2e8f0;">What trip was I planning?</div>
+    </div>
+    <div>
+      <div style="color: #34d399; font-size: 12px; font-weight: 600;">The agent remembers your Tokyo trip — that's persistent memory in action.</div>
+    </div>
+  </div>
+</div>
+
+**What to watch for while chatting:**
+- **Left panel (Chat):** Tool call indicators appear inline, showing which tool fired and how long it took
+- **Middle panel (Events):** Every framework event streams in real-time — tool:start, tool:end, memory:save
+- **Right panel (Memory):** Message count and saved notes update after each exchange
+
 ---
 
 ## Try It Locally
