@@ -17,6 +17,27 @@ import { EventsPanel } from '@/components/EventsPanel';
 import { MemoryPanel } from '@/components/MemoryPanel';
 import { FreeTierBanner } from '@/components/FreeTierBanner';
 
+const TOOL_LABELS: Record<string, string> = {
+  search_destinations: '🔍 Destination Research',
+  check_weather: '🌤️ Weather Forecast',
+  search_flights: '✈️ Flight Search',
+  book_flight: '✈️ Flight Booking',
+  search_hotels: '🏨 Hotel Search',
+  book_hotel: '🏨 Hotel Booking',
+  search_restaurants: '🍽️ Restaurant Search',
+  book_restaurant: '🍽️ Dinner Reservation',
+  calculate_budget: '💰 Budget Calculator',
+  save_itinerary: '📋 Save Itinerary',
+  web_search: '🔍 Web Search',
+  save_note: '📝 Save Note',
+  lookup_order: '📦 Order Lookup',
+  analyze_code: '🔍 Code Analysis',
+};
+
+function friendlyToolName(raw: string): string {
+  return TOOL_LABELS[raw] ?? raw;
+}
+
 export default function Home() {
   const { status: authStatus } = useSession();
   const isSignedIn = authStatus === 'authenticated';
@@ -208,13 +229,14 @@ export default function Home() {
                   ),
                 );
               } else if (event.type === 'tool:start') {
-                const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                const rawName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                const toolName = friendlyToolName(rawName);
                 setActivities((prev) => [
                   ...prev,
                   {
                     id: uuidv4(),
                     type: 'tool_running',
-                    name: `${toolName}`,
+                    name: toolName,
                     detail: event.data.arguments
                       ? String(event.data.arguments).slice(0, 80)
                       : undefined,
@@ -222,7 +244,8 @@ export default function Home() {
                   },
                 ]);
               } else if (event.type === 'tool:end') {
-                const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                const rawName = String(event.data.name ?? event.data.toolName ?? 'tool');
+                const toolName = friendlyToolName(rawName);
                 setActivities((prev) =>
                   prev.map((a) =>
                     a.type === 'tool_running' && a.name === toolName

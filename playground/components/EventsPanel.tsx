@@ -7,6 +7,27 @@ interface EventsPanelProps {
   events: StreamEvent[];
 }
 
+// Map raw tool names to friendly display names with emojis
+function toolDisplayName(raw: string): { emoji: string; label: string } {
+  const map: Record<string, { emoji: string; label: string }> = {
+    search_destinations: { emoji: '🔍', label: 'Destination Research' },
+    check_weather: { emoji: '🌤️', label: 'Weather Forecast' },
+    search_flights: { emoji: '✈️', label: 'Flight Search' },
+    book_flight: { emoji: '✈️', label: 'Flight Booking' },
+    search_hotels: { emoji: '🏨', label: 'Hotel Search' },
+    book_hotel: { emoji: '🏨', label: 'Hotel Booking' },
+    search_restaurants: { emoji: '🍽️', label: 'Restaurant Search' },
+    book_restaurant: { emoji: '🍽️', label: 'Dinner Reservation' },
+    calculate_budget: { emoji: '💰', label: 'Budget Calculator' },
+    save_itinerary: { emoji: '📋', label: 'Save Itinerary' },
+    web_search: { emoji: '🔍', label: 'Web Search' },
+    save_note: { emoji: '📝', label: 'Save Note' },
+    lookup_order: { emoji: '📦', label: 'Order Lookup' },
+    analyze_code: { emoji: '🔍', label: 'Code Analysis' },
+  };
+  return map[raw] ?? { emoji: '🔧', label: raw };
+}
+
 const AGENT_COLORS: Record<string, string> = {
   delegate: 'text-amber-600',
   'team:start': 'text-blue-600',
@@ -81,21 +102,23 @@ function describeEvent(event: StreamEvent): {
     };
   }
   if (type === 'tool:start') {
-    const name = String(data.name ?? data.tool ?? 'tool');
+    const rawName = String(data.name ?? data.tool ?? 'tool');
+    const friendly = toolDisplayName(rawName);
     return {
-      icon: '🔧',
-      text: `${name} executing...`,
+      icon: '→',
+      text: `${friendly.emoji} ${friendly.label}: executing...`,
       nested: true,
       isGroupStart: false,
       isGroupEnd: false,
     };
   }
   if (type === 'tool:end') {
-    const name = String(data.name ?? data.tool ?? 'tool');
+    const rawName = String(data.name ?? data.tool ?? 'tool');
+    const friendly = toolDisplayName(rawName);
     const ms = event.latencyMs != null ? ` — ${event.latencyMs}ms` : '';
     return {
       icon: '✓',
-      text: `${name} complete${ms}`,
+      text: `${friendly.emoji} ${friendly.label} complete${ms}`,
       nested: true,
       isGroupStart: false,
       isGroupEnd: false,
