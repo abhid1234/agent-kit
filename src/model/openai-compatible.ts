@@ -26,7 +26,15 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
         function: {
           name: t.name,
           description: t.description,
-          parameters: { type: 'object', properties: t.parameters },
+          parameters: {
+            type: 'object',
+            properties: Object.fromEntries(
+              Object.entries(t.parameters).map(([key, val]) => {
+                const { required: _req, ...rest } = val as unknown as Record<string, unknown>;
+                return [key, rest];
+              }),
+            ),
+          },
         },
       }));
     }
@@ -75,7 +83,15 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
         function: {
           name: t.name,
           description: t.description,
-          parameters: { type: 'object', properties: t.parameters },
+          parameters: {
+            type: 'object',
+            properties: Object.fromEntries(
+              Object.entries(t.parameters).map(([key, val]) => {
+                const { required: _req, ...rest } = val as unknown as Record<string, unknown>;
+                return [key, rest];
+              }),
+            ),
+          },
         },
       }));
     }
