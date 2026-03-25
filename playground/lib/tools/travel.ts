@@ -1,380 +1,107 @@
 import { Tool } from '@avee1234/agent-kit';
 
-// --- City data bank ---
-interface CityData {
-  highlights: string;
-  rating: string;
-  weather: Record<string, string>;
-  airports: { code: string; name: string }[];
-  airlines: { name: string; price: number; duration: string; stops: string }[];
-  hotels: { name: string; area: string; price: number; rating: string; highlight: string }[];
-  dailyCosts: { food: number; activities: number; transport: number };
-}
-
-const cities: Record<string, CityData> = {
-  tokyo: {
-    highlights: 'Cherry blossoms, Shibuya, Tsukiji Market, temples, anime culture',
-    rating: '4.8/5',
-    weather: {
-      spring: '15-22°C, cherry blossom season! Occasional rain. Pack layers.',
-      summer: '28-35°C, hot and humid. Light clothing, stay hydrated.',
-      fall: '15-25°C, beautiful autumn colors. Comfortable weather.',
-      winter: '2-10°C, cold and dry. Good for hot springs.',
-    },
-    airports: [
-      { code: 'NRT', name: 'Narita' },
-      { code: 'HND', name: 'Haneda' },
-    ],
-    airlines: [
-      { name: 'ANA', price: 890, duration: '11h 15m', stops: 'Direct' },
-      { name: 'JAL', price: 920, duration: '11h 30m', stops: 'Direct' },
-      { name: 'United', price: 750, duration: '13h 45m', stops: '1 stop' },
-    ],
-    hotels: [
-      {
-        name: 'Park Hyatt Tokyo',
-        area: 'Shinjuku',
-        price: 350,
-        rating: '4.9/5',
-        highlight: 'Lost in Translation vibes, stunning views',
-      },
-      {
-        name: 'Aman Tokyo',
-        area: 'Otemachi',
-        price: 800,
-        rating: '5.0/5',
-        highlight: 'Ultra-luxury, zen design',
-      },
-      {
-        name: 'MUJI Hotel Ginza',
-        area: 'Ginza',
-        price: 180,
-        rating: '4.5/5',
-        highlight: 'Minimalist, great location',
-      },
-      {
-        name: 'Hoshinoya Tokyo',
-        area: 'Otemachi',
-        price: 450,
-        rating: '4.8/5',
-        highlight: 'Traditional ryokan experience',
-      },
-    ],
-    dailyCosts: { food: 80, activities: 50, transport: 15 },
-  },
-  paris: {
-    highlights: 'Eiffel Tower, Louvre, Seine River, cafés, art, fashion',
-    rating: '4.7/5',
-    weather: {
-      spring: '10-18°C, mild and pleasant. Flowers blooming. Light jacket.',
-      summer: '18-28°C, warm and sunny. Peak tourist season.',
-      fall: '10-18°C, beautiful colors along the Seine. Layers recommended.',
-      winter: '2-8°C, chilly but magical. Christmas markets.',
-    },
-    airports: [
-      { code: 'CDG', name: 'Charles de Gaulle' },
-      { code: 'ORY', name: 'Orly' },
-    ],
-    airlines: [
-      { name: 'Air France', price: 680, duration: '10h 45m', stops: 'Direct' },
-      { name: 'Delta', price: 720, duration: '11h', stops: 'Direct' },
-      { name: 'Norwegian', price: 450, duration: '14h 20m', stops: '1 stop' },
-    ],
-    hotels: [
-      {
-        name: 'Le Marais Boutique',
-        area: 'Le Marais',
-        price: 220,
-        rating: '4.6/5',
-        highlight: 'Charming, central, historic district',
-      },
-      {
-        name: 'Hôtel Plaza Athénée',
-        area: 'Champs-Élysées',
-        price: 900,
-        rating: '5.0/5',
-        highlight: 'Iconic luxury, Eiffel Tower views',
-      },
-      {
-        name: 'Mama Shelter Paris',
-        area: 'Belleville',
-        price: 130,
-        rating: '4.3/5',
-        highlight: 'Trendy, rooftop bar, great value',
-      },
-      {
-        name: 'Le Pavillon de la Reine',
-        area: 'Place des Vosges',
-        price: 380,
-        rating: '4.8/5',
-        highlight: 'Hidden gem, romantic courtyard',
-      },
-    ],
-    dailyCosts: { food: 70, activities: 45, transport: 12 },
-  },
-  barcelona: {
-    highlights: 'Sagrada Familia, beaches, Gaudí architecture, tapas, nightlife',
-    rating: '4.7/5',
-    weather: {
-      spring: '14-20°C, pleasant. Perfect for sightseeing.',
-      summer: '24-32°C, hot and sunny. Beach weather!',
-      fall: '16-24°C, warm and less crowded. Great time to visit.',
-      winter: '8-14°C, mild. Fewer tourists.',
-    },
-    airports: [{ code: 'BCN', name: 'El Prat' }],
-    airlines: [
-      { name: 'Iberia', price: 580, duration: '11h 30m', stops: 'Direct' },
-      { name: 'Vueling', price: 420, duration: '14h', stops: '1 stop' },
-      { name: 'Delta', price: 650, duration: '10h 45m', stops: 'Direct' },
-    ],
-    hotels: [
-      {
-        name: 'Hotel Arts Barcelona',
-        area: 'Barceloneta',
-        price: 320,
-        rating: '4.8/5',
-        highlight: 'Beachfront luxury, Frank Gehry fish',
-      },
-      {
-        name: 'Casa Camper',
-        area: 'El Raval',
-        price: 180,
-        rating: '4.5/5',
-        highlight: 'Quirky design, rooftop terrace',
-      },
-      {
-        name: 'Yurbban Ramblas',
-        area: 'Las Ramblas',
-        price: 140,
-        rating: '4.4/5',
-        highlight: 'Rooftop pool, central location',
-      },
-      {
-        name: 'El Palace Barcelona',
-        area: 'Eixample',
-        price: 400,
-        rating: '4.9/5',
-        highlight: 'Grand luxury, historic palace',
-      },
-    ],
-    dailyCosts: { food: 55, activities: 35, transport: 10 },
-  },
-  bali: {
-    highlights: 'Temples, rice terraces, surfing, yoga, waterfalls',
-    rating: '4.6/5',
-    weather: {
-      spring: '27-33°C, transition to dry season. Good time.',
-      summer: '26-30°C, dry season. Perfect weather.',
-      fall: '27-33°C, still dry. Great for outdoor activities.',
-      winter: '27-33°C, wet season. Afternoon showers but lush greenery.',
-    },
-    airports: [{ code: 'DPS', name: 'Ngurah Rai' }],
-    airlines: [
-      { name: 'Singapore Airlines', price: 850, duration: '18h', stops: '1 stop' },
-      { name: 'Cathay Pacific', price: 780, duration: '19h 30m', stops: '1 stop' },
-      { name: 'ANA', price: 920, duration: '17h', stops: '1 stop' },
-    ],
-    hotels: [
-      {
-        name: 'Four Seasons Ubud',
-        area: 'Ubud',
-        price: 550,
-        rating: '5.0/5',
-        highlight: 'Jungle luxury, infinity pool over valley',
-      },
-      {
-        name: 'The Mulia',
-        area: 'Nusa Dua',
-        price: 300,
-        rating: '4.8/5',
-        highlight: 'Beachfront resort, stunning pools',
-      },
-      {
-        name: 'Komaneka Bisma',
-        area: 'Ubud',
-        price: 120,
-        rating: '4.5/5',
-        highlight: 'Boutique, rice terrace views',
-      },
-      {
-        name: 'W Bali Seminyak',
-        area: 'Seminyak',
-        price: 280,
-        rating: '4.7/5',
-        highlight: 'Trendy beach club vibes',
-      },
-    ],
-    dailyCosts: { food: 25, activities: 20, transport: 8 },
-  },
-  london: {
-    highlights: 'Big Ben, British Museum, West End, pubs, royal palaces',
-    rating: '4.7/5',
-    weather: {
-      spring: '8-15°C, mild with rain. Umbrella essential.',
-      summer: '15-25°C, pleasant. Long days, parks in bloom.',
-      fall: '8-15°C, crisp. Beautiful parks.',
-      winter: '3-8°C, cold and grey. Festive season.',
-    },
-    airports: [
-      { code: 'LHR', name: 'Heathrow' },
-      { code: 'LGW', name: 'Gatwick' },
-    ],
-    airlines: [
-      { name: 'British Airways', price: 620, duration: '10h 30m', stops: 'Direct' },
-      { name: 'Virgin Atlantic', price: 580, duration: '10h 45m', stops: 'Direct' },
-      { name: 'Norwegian', price: 400, duration: '13h', stops: '1 stop' },
-    ],
-    hotels: [
-      {
-        name: 'The Ned',
-        area: 'City of London',
-        price: 350,
-        rating: '4.8/5',
-        highlight: 'Rooftop pool, former bank building',
-      },
-      {
-        name: 'citizenM Tower of London',
-        area: 'Tower Hill',
-        price: 150,
-        rating: '4.4/5',
-        highlight: 'Modern, tech-forward, great value',
-      },
-      {
-        name: 'The Savoy',
-        area: 'Strand',
-        price: 700,
-        rating: '5.0/5',
-        highlight: 'Iconic luxury since 1889',
-      },
-      {
-        name: 'Hoxton Shoreditch',
-        area: 'Shoreditch',
-        price: 160,
-        rating: '4.5/5',
-        highlight: 'Trendy, great neighborhood',
-      },
-    ],
-    dailyCosts: { food: 65, activities: 40, transport: 18 },
-  },
-  'new york': {
-    highlights: 'Times Square, Central Park, Statue of Liberty, Broadway, pizza',
-    rating: '4.6/5',
-    weather: {
-      spring: '10-20°C, pleasant. Cherry blossoms in Central Park.',
-      summer: '25-35°C, hot and humid. Rooftop bar season.',
-      fall: '10-22°C, beautiful foliage. Best time to visit.',
-      winter: '-2-5°C, cold. Holiday decorations, ice skating.',
-    },
-    airports: [
-      { code: 'JFK', name: 'JFK' },
-      { code: 'EWR', name: 'Newark' },
-    ],
-    airlines: [
-      { name: 'JetBlue', price: 280, duration: '5h 30m', stops: 'Direct' },
-      { name: 'United', price: 320, duration: '5h 45m', stops: 'Direct' },
-      { name: 'Delta', price: 350, duration: '5h 30m', stops: 'Direct' },
-    ],
-    hotels: [
-      {
-        name: 'The Standard High Line',
-        area: 'Meatpacking',
-        price: 350,
-        rating: '4.6/5',
-        highlight: 'Iconic design, High Line views',
-      },
-      {
-        name: 'Pod 51',
-        area: 'Midtown',
-        price: 120,
-        rating: '4.2/5',
-        highlight: 'Compact, central, great value',
-      },
-      {
-        name: 'The Plaza',
-        area: 'Central Park',
-        price: 800,
-        rating: '4.9/5',
-        highlight: 'Legendary luxury',
-      },
-      {
-        name: 'Arlo NoMad',
-        area: 'NoMad',
-        price: 200,
-        rating: '4.5/5',
-        highlight: 'Rooftop bar, trendy area',
-      },
-    ],
-    dailyCosts: { food: 75, activities: 50, transport: 15 },
-  },
-};
-
-function findCity(query: string): { key: string; data: CityData } | null {
-  const q = query.toLowerCase();
-  for (const [key, data] of Object.entries(cities)) {
-    if (q.includes(key)) return { key, data };
-  }
-  return null;
-}
-
-function getSeason(month: string): string {
-  const m = month.toLowerCase();
-  if (['mar', 'apr', 'may', 'spring'].some((s) => m.includes(s))) return 'spring';
-  if (['jun', 'jul', 'aug', 'summer'].some((s) => m.includes(s))) return 'summer';
-  if (['sep', 'oct', 'nov', 'fall', 'autumn'].some((s) => m.includes(s))) return 'fall';
-  return 'winter';
-}
-
-// --- Destination Research ---
+// --- Destination Research (Wikipedia API — works for ANY city) ---
 export const searchDestinations = Tool.create({
   name: 'search_destinations',
-  description: 'Search for travel destinations matching criteria',
-  parameters: { query: { type: 'string', description: 'What kind of trip or destination' } },
+  description: 'Search for travel destination information',
+  parameters: { query: { type: 'string', description: 'Destination city or trip description' } },
   execute: async ({ query }) => {
-    await delay(300);
-    const match = findCity(String(query));
-    if (match) {
-      return JSON.stringify([
-        {
-          name: capitalize(match.key),
-          highlights: match.data.highlights,
-          rating: match.data.rating,
-        },
-      ]);
+    const q = String(query);
+    try {
+      // Try direct page summary first
+      const res = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`,
+        { headers: { 'User-Agent': 'agent-kit-playground/1.0' } },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.extract) {
+          return JSON.stringify({
+            name: data.title,
+            summary: data.extract.slice(0, 500),
+            coordinates: data.coordinates ?? null,
+          });
+        }
+      }
+      // Fallback: search Wikipedia
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q + ' travel tourism')}&format=json&srlimit=3`,
+        { headers: { 'User-Agent': 'agent-kit-playground/1.0' } },
+      );
+      const searchData = await searchRes.json();
+      if (searchData.query?.search?.length) {
+        return JSON.stringify(
+          searchData.query.search.map((item: { title: string; snippet: string }) => ({
+            name: item.title,
+            summary: item.snippet.replace(/<[^>]*>/g, ''),
+          })),
+        );
+      }
+    } catch {
+      /* fall through */
     }
-    // Return top 3 cities if no specific match
-    return JSON.stringify(
-      Object.entries(cities)
-        .slice(0, 3)
-        .map(([key, data]) => ({
-          name: capitalize(key),
-          highlights: data.highlights,
-          rating: data.rating,
-        })),
-    );
+    return `Found destination: ${q}. A great place to explore!`;
   },
 });
 
-// --- Weather ---
+// --- Weather (Open-Meteo API — free, global, no key needed) ---
 export const checkWeather = Tool.create({
   name: 'check_weather',
-  description: 'Check weather forecast for a destination and time period',
+  description: 'Check weather forecast for a destination',
   parameters: {
     destination: { type: 'string', description: 'City name' },
-    month: { type: 'string', description: 'Travel month or season' },
+    month: { type: 'string', description: 'Travel month' },
   },
   execute: async ({ destination, month }) => {
-    await delay(200);
     const dest = String(destination);
-    const match = findCity(dest);
-    const season = getSeason(String(month || 'spring'));
-    if (match) {
-      return `${dest}: ${match.data.weather[season]}`;
+    const m = String(month || '').toLowerCase();
+    try {
+      // Geocode the city first
+      const geoRes = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(dest)}&count=1`,
+      );
+      const geoData = await geoRes.json();
+      if (!geoData.results?.length)
+        return `Weather for ${dest}: ~22°C, pleasant conditions. Good time to visit.`;
+      const { latitude, longitude, name, country } = geoData.results[0];
+
+      // Get current/forecast weather
+      const weatherRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=auto&forecast_days=7`,
+      );
+      const weather = await weatherRes.json();
+      const daily = weather.daily;
+      if (!daily) return `${name}, ${country}: Pleasant weather expected.`;
+
+      const avgHigh = Math.round(
+        daily.temperature_2m_max.reduce((a: number, b: number) => a + b, 0) /
+          daily.temperature_2m_max.length,
+      );
+      const avgLow = Math.round(
+        daily.temperature_2m_min.reduce((a: number, b: number) => a + b, 0) /
+          daily.temperature_2m_min.length,
+      );
+      const avgRain = Math.round(
+        daily.precipitation_probability_max.reduce((a: number, b: number) => a + b, 0) /
+          daily.precipitation_probability_max.length,
+      );
+
+      let advice = '';
+      if (avgHigh > 30) advice = 'Hot — pack light clothing, sunscreen, and stay hydrated.';
+      else if (avgHigh > 22) advice = 'Warm and pleasant. Light layers recommended.';
+      else if (avgHigh > 15) advice = 'Mild — bring a light jacket for evenings.';
+      else if (avgHigh > 5) advice = 'Cool — pack warm layers and a coat.';
+      else advice = 'Cold — bring heavy winter clothing.';
+      if (avgRain > 50) advice += ' Umbrella essential — high chance of rain.';
+
+      return `${name}, ${country} (7-day forecast):\n• High: ${avgHigh}°C / Low: ${avgLow}°C\n• Rain chance: ${avgRain}%\n• ${advice}`;
+    } catch {
+      return `${dest}: ~22°C, pleasant conditions expected. Pack layers to be safe.`;
     }
-    return `${dest}: 22°C average, pleasant weather. Good time to visit.`;
   },
 });
 
-// --- Flights ---
+// --- Flights (simulated but destination-aware) ---
 export const searchFlights = Tool.create({
   name: 'search_flights',
   description: 'Search for available flights to a destination',
@@ -384,26 +111,48 @@ export const searchFlights = Tool.create({
     returnDate: { type: 'string', description: 'Return date' },
   },
   execute: async ({ destination, departDate, returnDate }) => {
-    await delay(500);
+    await delay(400);
     const dest = String(destination);
-    const match = findCity(dest);
-    const airport = match ? match.data.airports[0].code : 'INT';
-    const airlines = match?.data.airlines ?? [
-      { name: 'United', price: 600, duration: '10h', stops: 'Direct' },
-      { name: 'Delta', price: 650, duration: '11h', stops: 'Direct' },
-      { name: 'Budget Air', price: 420, duration: '14h', stops: '1 stop' },
+
+    // Geocode to estimate distance and generate realistic prices
+    let airportCode = 'INT';
+    let baseCost = 600;
+    let baseDuration = 10;
+    try {
+      const geoRes = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(dest)}&count=1`,
+      );
+      const geoData = await geoRes.json();
+      if (geoData.results?.length) {
+        const { latitude, longitude, country_code } = geoData.results[0];
+        // Rough distance from SFO (37.6, -122.4) in thousands of km
+        const dist =
+          (Math.sqrt(Math.pow(latitude - 37.6, 2) + Math.pow(longitude + 122.4, 2)) * 111) / 1000;
+        baseCost = Math.round(200 + dist * 60 + Math.random() * 100);
+        baseDuration = Math.round(2 + dist * 1.2);
+        airportCode = (country_code || 'INT').toUpperCase();
+      }
+    } catch {
+      /* use defaults */
+    }
+
+    const airlines = [
+      { name: 'Premium Carrier', priceMult: 1.15, durationMult: 1.0, stops: 'Direct' },
+      { name: 'National Carrier', priceMult: 1.0, durationMult: 1.05, stops: 'Direct' },
+      { name: 'Budget Option', priceMult: 0.75, durationMult: 1.4, stops: '1 stop' },
     ];
+
     return JSON.stringify({
       flights: airlines.map((a) => ({
         airline: a.name,
-        route: `SFO → ${airport}`,
+        route: `SFO → ${airportCode}`,
         depart: departDate || 'TBD',
         return: returnDate || 'TBD',
-        price: `$${a.price}`,
-        duration: a.duration,
+        price: `$${Math.round(baseCost * a.priceMult)}`,
+        duration: `${Math.round(baseDuration * a.durationMult)}h`,
         stops: a.stops,
       })),
-      recommendation: `${airlines[0].name} offers the best balance of price and convenience.`,
+      recommendation: `National Carrier direct flight at $${baseCost} offers the best balance.`,
     });
   },
 });
@@ -416,12 +165,12 @@ export const bookFlight = Tool.create({
     price: { type: 'string', description: 'Flight price' },
   },
   execute: async ({ airline, price }) => {
-    await delay(400);
+    await delay(300);
     return `✅ Flight booked! ${airline} — Confirmation #TK${Math.floor(Math.random() * 90000 + 10000)}. Total: ${price}`;
   },
 });
 
-// --- Hotels ---
+// --- Hotels (simulated but destination-aware pricing) ---
 export const searchHotels = Tool.create({
   name: 'search_hotels',
   description: 'Search for hotels at a destination',
@@ -433,30 +182,57 @@ export const searchHotels = Tool.create({
   execute: async ({ destination }) => {
     await delay(400);
     const dest = String(destination);
-    const match = findCity(dest);
-    const hotels = match?.data.hotels ?? [
+
+    // Generate price tier based on city cost level
+    let priceLevel = 1.0; // multiplier
+    const expensive = [
+      'tokyo',
+      'new york',
+      'london',
+      'paris',
+      'zurich',
+      'singapore',
+      'hong kong',
+      'sydney',
+    ];
+    const moderate = ['barcelona', 'rome', 'berlin', 'amsterdam', 'seoul', 'dubai', 'los angeles'];
+    const budget = ['bali', 'bangkok', 'hanoi', 'mexico city', 'lisbon', 'prague', 'budapest'];
+    const d = dest.toLowerCase();
+    if (expensive.some((c) => d.includes(c))) priceLevel = 1.3;
+    else if (moderate.some((c) => d.includes(c))) priceLevel = 1.0;
+    else if (budget.some((c) => d.includes(c))) priceLevel = 0.6;
+
+    const hotels = [
       {
-        name: 'City Center Hotel',
-        area: 'Downtown',
-        price: 180,
-        rating: '4.5/5',
-        highlight: 'Central location, modern rooms',
-      },
-      {
-        name: 'Boutique Inn',
-        area: 'Old Town',
-        price: 130,
-        rating: '4.3/5',
-        highlight: 'Charming, local character',
-      },
-      {
-        name: 'Grand Palace Hotel',
+        name: `${dest} Grand Hotel`,
         area: 'City Center',
-        price: 350,
+        price: Math.round(350 * priceLevel),
         rating: '4.8/5',
-        highlight: 'Luxury, full-service spa',
+        highlight: 'Luxury, full-service spa, central location',
+      },
+      {
+        name: `${dest} Boutique Inn`,
+        area: 'Historic Quarter',
+        price: Math.round(180 * priceLevel),
+        rating: '4.5/5',
+        highlight: 'Charming, local character, walkable',
+      },
+      {
+        name: `${dest} Budget Stay`,
+        area: 'Near Transit',
+        price: Math.round(90 * priceLevel),
+        rating: '4.2/5',
+        highlight: 'Clean, affordable, great transport links',
+      },
+      {
+        name: `${dest} Design Hotel`,
+        area: 'Trendy District',
+        price: Math.round(220 * priceLevel),
+        rating: '4.6/5',
+        highlight: 'Modern design, rooftop bar',
       },
     ];
+
     return JSON.stringify({
       hotels: hotels.map((h) => ({
         name: h.name,
@@ -465,7 +241,7 @@ export const searchHotels = Tool.create({
         rating: h.rating,
         highlight: h.highlight,
       })),
-      recommendation: `${hotels.sort((a, b) => a.price - b.price)[1]?.name || hotels[0].name} offers the best value in ${dest}.`,
+      recommendation: `${hotels[1].name} at $${hotels[1].price}/night offers the best value in ${dest}.`,
     });
   },
 });
@@ -486,10 +262,10 @@ export const bookHotel = Tool.create({
   },
 });
 
-// --- Budget ---
+// --- Budget Calculator ---
 export const calculateBudget = Tool.create({
   name: 'calculate_budget',
-  description: 'Calculate total trip budget including flights, hotel, food, activities',
+  description: 'Calculate total trip budget',
   parameters: {
     destination: { type: 'string', description: 'Destination' },
     days: { type: 'string', description: 'Number of days' },
@@ -499,24 +275,41 @@ export const calculateBudget = Tool.create({
   execute: async ({ destination, days, flightCost, hotelCostPerNight }) => {
     await delay(200);
     const dest = String(destination);
-    const match = findCity(dest);
     const d = parseInt(String(days)) || 5;
     const flight = parseInt(String(flightCost).replace(/[^0-9]/g, '')) || 600;
     const hotel = parseInt(String(hotelCostPerNight).replace(/[^0-9]/g, '')) || 180;
-    const costs = match?.data.dailyCosts ?? { food: 60, activities: 40, transport: 12 };
-    const food = d * costs.food;
-    const activities = d * costs.activities;
-    const transport = d * costs.transport;
+
+    // Estimate daily costs based on destination
+    let foodPerDay = 60,
+      activityPerDay = 40,
+      transportPerDay = 12;
+    const dLower = dest.toLowerCase();
+    const expensive = ['tokyo', 'new york', 'london', 'paris', 'zurich', 'singapore'];
+    const budgetCities = ['bali', 'bangkok', 'hanoi', 'mexico city', 'prague', 'budapest'];
+    if (expensive.some((c) => dLower.includes(c))) {
+      foodPerDay = 80;
+      activityPerDay = 55;
+      transportPerDay = 18;
+    } else if (budgetCities.some((c) => dLower.includes(c))) {
+      foodPerDay = 25;
+      activityPerDay = 20;
+      transportPerDay = 8;
+    }
+
+    const food = d * foodPerDay;
+    const activities = d * activityPerDay;
+    const transport = d * transportPerDay;
     const total = flight + hotel * d + food + activities + transport;
+
     return JSON.stringify({
       destination: dest,
       days: d,
       breakdown: {
         flights: `$${flight}`,
         hotel: `$${hotel * d} ($${hotel}/night × ${d} nights)`,
-        food: `$${food} ($${costs.food}/day)`,
-        activities: `$${activities} ($${costs.activities}/day)`,
-        localTransport: `$${transport} ($${costs.transport}/day)`,
+        food: `$${food} ($${foodPerDay}/day)`,
+        activities: `$${activities} ($${activityPerDay}/day)`,
+        localTransport: `$${transport} ($${transportPerDay}/day)`,
       },
       total: `$${total}`,
       perDay: `$${Math.round(total / d)}/day`,
@@ -541,11 +334,4 @@ export const saveItinerary = Tool.create({
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function capitalize(s: string): string {
-  return s
-    .split(' ')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
 }
