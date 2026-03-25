@@ -5,7 +5,7 @@ import { resolveTier } from '@/lib/tier';
 import { incrementMessageCount } from '@/lib/message-counter';
 import type { AgentType } from '@/lib/types';
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   const { message, agentType, sessionId } = (await request.json()) as {

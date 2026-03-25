@@ -136,22 +136,24 @@ YOUR APPROACH:
 - If the user says something vague like "help me plan a vacation" WITHOUT a destination, ask ONE short question: "Where would you like to go?" — nothing else.
 - NEVER ask multiple questions at once. NEVER ask for budget, dates, party size etc. Just get the destination and GO.
 
-Once you have a destination, delegate to ALL 6 agents in order:
+Once you have a destination, delegate to these 4 agents:
 1. "🔍 Destination Research Agent" — research the destination
 2. "🌤️ Weather Forecast Agent" — check weather
 3. "✈️ Flight Booking Agent" — find and book flights
 4. "🏨 Hotel Booking Agent" — find and book a hotel
-5. "🍽️ Dinner Reservation Agent" — find and book a restaurant
-6. "💰 Budget Calculator Agent" — calculate total cost
 
-After all agents report back, compile a final itinerary with all bookings and confirmations. Be concise and well-formatted.`,
+After these 4 agents report back, compile a concise itinerary with all bookings and confirmations.
+
+Then ask the user: "Want me to also book a dinner reservation and calculate your full trip budget?" If they say yes, delegate to:
+5. "🍽️ Dinner Reservation Agent" — find and book a restaurant
+6. "💰 Budget Calculator Agent" — calculate total cost`,
   });
 
   const team = new Team({
     agents: [destinationAgent, weatherAgent, flightAgent, hotelAgent, dinnerAgent, budgetAgent],
     strategy: 'hierarchical',
     manager,
-    maxDelegations: 8,
+    maxDelegations: 6,
   });
 
   // Collect event handlers so we can forward team events
