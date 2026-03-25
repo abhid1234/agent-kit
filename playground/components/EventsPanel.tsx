@@ -37,24 +37,16 @@ function describeEvent(event: StreamEvent): {
   const { type, data } = event;
 
   if (type === 'team:start') {
-    const count = data.agentCount ?? (Array.isArray(data.agents) ? data.agents.length : '');
-    return {
-      icon: '🚀',
-      text: `Team started with ${count} agents`,
-      nested: false,
-      isGroupStart: true,
-      isGroupEnd: false,
-    };
+    return { icon: '', text: '', nested: false, isGroupStart: false, isGroupEnd: false }; // hidden
   }
   if (type === 'team:end') {
-    const count = data.responseCount ?? 0;
     return {
-      icon: '✅',
-      text: `Team completed — ${count} agents responded`,
+      icon: '─',
+      text: '────────────────',
       nested: false,
       isGroupStart: false,
       isGroupEnd: true,
-    };
+    }; // separator
   }
   if (type === 'team:delegate') {
     const agent = String(data.agentName ?? data.to ?? 'agent');
@@ -162,31 +154,38 @@ export function EventsPanel({ events }: EventsPanelProps) {
           </div>
         ) : (
           <>
-            {events.map((event, i) => {
-              const desc = describeEvent(event);
-              const color = AGENT_COLORS[event.type] ?? 'text-gray-500';
+            {events
+              .filter((e) => {
+                // Hide team:start and message events — they add noise
+                if (e.type === 'team:start') return false;
+                if (e.type === 'message') return false;
+                return true;
+              })
+              .map((event, i) => {
+                const desc = describeEvent(event);
+                const color = AGENT_COLORS[event.type] ?? 'text-gray-500';
 
-              return (
-                <div
-                  key={`${event.timestamp}-${i}`}
-                  className={`flex items-start gap-2 py-1 px-2 rounded-md animate-fade-in ${
-                    desc.isGroupStart
-                      ? 'bg-blue-50 mt-2 pt-1.5'
-                      : desc.isGroupEnd
-                        ? 'bg-green-50 mb-2 pb-1.5'
-                        : desc.nested
-                          ? 'ml-4 border-l-2 border-gray-200 pl-2'
-                          : ''
-                  }`}
-                >
-                  <span className="text-[10px] text-gray-400 font-mono shrink-0 pt-0.5 w-16">
-                    {formatTime(event.timestamp)}
-                  </span>
-                  <span className="text-xs shrink-0">{desc.icon}</span>
-                  <span className={`text-xs ${color} leading-relaxed`}>{desc.text}</span>
-                </div>
-              );
-            })}
+                return (
+                  <div
+                    key={`${event.timestamp}-${i}`}
+                    className={`flex items-start gap-2 py-1 px-2 rounded-md animate-fade-in ${
+                      desc.isGroupStart
+                        ? 'bg-blue-50 mt-2 pt-1.5'
+                        : desc.isGroupEnd
+                          ? 'bg-green-50 mb-2 pb-1.5'
+                          : desc.nested
+                            ? 'ml-4 border-l-2 border-gray-200 pl-2'
+                            : ''
+                    }`}
+                  >
+                    <span className="text-[10px] text-gray-400 font-mono shrink-0 pt-0.5 w-16">
+                      {formatTime(event.timestamp)}
+                    </span>
+                    <span className="text-xs shrink-0">{desc.icon}</span>
+                    <span className={`text-xs ${color} leading-relaxed`}>{desc.text}</span>
+                  </div>
+                );
+              })}
             <div ref={bottomRef} />
           </>
         )}
