@@ -94,12 +94,13 @@ export default function Home() {
     }
   }, [session, refreshMemory]);
 
-  // When agent changes, clear messages and events
+  // When agent changes, clear messages, events, and activities
   const handleAgentChange = useCallback((agent: AgentType) => {
     setActiveAgent(agent);
     setMessages([]);
     setEvents([]);
     setStreamingMessage('');
+    setActivities([]);
   }, []);
 
   const handleSend = useCallback(
@@ -331,6 +332,7 @@ export default function Home() {
             isLoading={isLoading}
             onSend={handleSend}
             activities={activities}
+            agentType={activeAgent}
           />
         </div>
 
