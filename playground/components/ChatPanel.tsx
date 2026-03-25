@@ -1,9 +1,65 @@
 'use client';
 
 import { useRef, useEffect, useState, KeyboardEvent } from 'react';
-import { ChatMessage, ActivityItem } from '@/lib/types';
+import { ChatMessage, ActivityItem, AgentType } from '@/lib/types';
 import { MessageBubble } from './MessageBubble';
 import { ActivityCard } from './ActivityCard';
+import { CodePreview } from './CodePreview';
+
+interface AgentWelcomeConfig {
+  emoji: string;
+  title: string;
+  description: string;
+  prompts: string[];
+}
+
+const AGENT_WELCOME: Record<AgentType, AgentWelcomeConfig> = {
+  'travel-planner': {
+    emoji: '✈️',
+    title: 'Travel Concierge',
+    description: 'I can plan trips, book flights & hotels, check weather, and more.',
+    prompts: [
+      'Plan a 5-day trip to Tokyo in April',
+      'Find flights and hotels in Paris under $5k',
+      "What's the weather like in Bali next month?",
+      'Plan a weekend getaway to Barcelona',
+    ],
+  },
+  'research-assistant': {
+    emoji: '🔬',
+    title: 'Research Assistant',
+    description: 'I can search the web, synthesize sources, and save structured research notes.',
+    prompts: [
+      'Find recent papers on transformer architectures',
+      'Compare LangChain vs LlamaIndex for RAG',
+      'Summarize the state of open-source LLMs in 2025',
+      'Research market trends in AI infrastructure',
+    ],
+  },
+  'customer-support': {
+    emoji: '🛒',
+    title: 'Customer Support',
+    description: 'I can look up orders, handle returns, and resolve account issues instantly.',
+    prompts: [
+      'Where is my order #12345?',
+      'I want to return an item I bought last week',
+      'My account is locked, can you help?',
+      "I was charged twice — what's the refund process?",
+    ],
+  },
+  'code-reviewer': {
+    emoji: '📝',
+    title: 'Code Reviewer',
+    description:
+      'I can review pull requests, spot bugs, suggest improvements, and check best practices.',
+    prompts: [
+      'Review this React component for performance issues',
+      'Check my API handler for security vulnerabilities',
+      'Suggest improvements to my database query',
+      'Review this PR diff for code quality',
+    ],
+  },
+};
 
 interface ChatPanelProps {
   messages: ChatMessage[];
@@ -11,6 +67,7 @@ interface ChatPanelProps {
   isLoading: boolean;
   onSend: (text: string) => void;
   activities?: ActivityItem[];
+  agentType: AgentType;
 }
 
 export function ChatPanel({
@@ -19,10 +76,13 @@ export function ChatPanel({
   isLoading,
   onSend,
   activities = [],
+  agentType,
 }: ChatPanelProps) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const welcome = AGENT_WELCOME[agentType];
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -62,14 +122,62 @@ export function ChatPanel({
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4 min-h-0">
         {messages.length === 0 && !streamingMessage && (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-gray-400 text-sm">Start a conversation</p>
-              <p className="text-gray-400 text-xs mt-1">Ask anything — your agent is ready</p>
+            <div className="text-center max-w-md">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">{welcome.emoji}</span>
+              </div>
+              <p className="text-gray-800 text-base font-semibold mb-1">{welcome.title}</p>
+              <p className="text-gray-400 text-sm mb-6">{welcome.description}</p>
+              <div className="flex flex-col gap-2">
+                {welcome.prompts.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => onSend(prompt)}
+                    disabled={isLoading}
+                    className="text-left px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all duration-150 disabled:opacity-50"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+
+              {/* Architecture banner — 4 core concepts */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-3">
+                  Powered by agent-kit
+                </p>
+                <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                  {[
+                    { label: 'Agent', color: 'bg-blue-50 border-blue-200 text-blue-700' },
+                    { label: '→', color: 'text-gray-300 border-transparent bg-transparent' },
+                    { label: 'Tools', color: 'bg-violet-50 border-violet-200 text-violet-700' },
+                    { label: '→', color: 'text-gray-300 border-transparent bg-transparent' },
+                    { label: 'Memory', color: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
+                    { label: '→', color: 'text-gray-300 border-transparent bg-transparent' },
+                    { label: 'Events', color: 'bg-amber-50 border-amber-200 text-amber-700' },
+                  ].map(({ label, color }, i) => (
+                    <span
+                      key={i}
+                      className={`px-2 py-0.5 rounded-md border text-[11px] font-medium ${color}`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href="https://github.com/avee1234/agent-kit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 text-[11px] text-gray-400 hover:text-blue-600 transition-colors duration-150"
+                >
+                  github.com/avee1234/agent-kit ↗
+                </a>
+              </div>
             </div>
           </div>
         )}
 
-        {messages.map((msg, i) => (
+        {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} isStreaming={false} />
         ))}
 
@@ -123,6 +231,9 @@ export function ChatPanel({
 
         <div ref={bottomRef} />
       </div>
+
+      {/* Code preview (collapsible, above input bar) */}
+      <CodePreview agentType={agentType} />
 
       {/* Input bar */}
       <div className="shrink-0 px-4 py-3 border-t border-gray-200">
