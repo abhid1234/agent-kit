@@ -29,13 +29,11 @@ export class HierarchicalStrategy implements Strategy {
       parameters: {
         agentName: {
           type: 'string',
-          description: 'The name of the agent to delegate to',
-          required: true,
+          description: `The name of the agent to delegate to. Available: ${[...agents.map((a) => a.name)].join(', ')}`,
         },
         task: {
           type: 'string',
           description: 'The task to assign to the agent',
-          required: true,
         },
       },
       execute: async (params) => {
