@@ -133,24 +133,26 @@ export default function Home() {
             if (raw === '[DONE]') {
               // Finalize streaming message
               if (accumulatedContent) {
-                // Capture current activities to attach to the message
+                // Capture content before any state updates clear it
+                const finalContent = accumulatedContent;
+                accumulatedContent = '';
+
+                // Attach activities to the message so they persist above the response
                 setActivities((currentActivities) => {
                   const assistantMsg: ChatMessage = {
                     id: uuidv4(),
                     role: 'assistant',
-                    content: accumulatedContent,
+                    content: finalContent,
                     timestamp: Date.now(),
                     activities: currentActivities.length > 0 ? [...currentActivities] : undefined,
                   };
                   setMessages((prev) => [...prev, assistantMsg]);
-                  return []; // clear activities after attaching
+                  return [];
                 });
                 setStreamingMessage('');
-                // Increment local message count for anonymous users after a successful response
                 if (!isSignedIn) {
                   setMessageCount((prev) => prev + 1);
                 }
-                accumulatedContent = '';
               }
               setIsLoading(false);
               if (session.sessionId) {
