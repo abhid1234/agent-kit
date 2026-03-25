@@ -3,6 +3,7 @@ import { Agent } from '../agent';
 import { Tool } from '../tool';
 import type { AgentEventEmitter } from '../events';
 import type { Strategy, StrategyOptions, TeamResult, AgentResponse } from './interface';
+import type { Memory } from '../memory';
 
 export class HierarchicalStrategy implements Strategy {
   async execute(
@@ -62,10 +63,11 @@ export class HierarchicalStrategy implements Strategy {
     });
 
     // Create a fresh Agent with the manager's model adapter + the delegate tool
-    // maxToolRounds caps how many delegations can happen
+    // Preserve the manager's memory so conversation history persists across runs
     const orchestratorAgent = new Agent({
       name: manager.name,
       model: manager.getModel(),
+      memory: manager.getMemory(),
       tools: [delegateTool],
       system: `You are an orchestrating manager. You have access to specialist agents: ${[...agentMap.keys()].join(', ')}. Use the delegate tool to assign sub-tasks to them.`,
       maxToolRounds: maxDelegations,

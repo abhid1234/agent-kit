@@ -71,6 +71,10 @@ export class Agent {
     return this.model;
   }
 
+  getMemory(): Memory | undefined {
+    return this.memory;
+  }
+
   on(type: string, handler: (event: AgentEvent) => void): void {
     this.emitter.on(type, handler);
   }
