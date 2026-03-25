@@ -152,9 +152,12 @@ export function ChatPanel({
             Send
           </button>
         </div>
-        <p className="text-xs text-gray-400 mt-1.5 ml-1">
-          Press Enter to send, Shift+Enter for new line
-        </p>
+        <div className="flex items-center justify-between mt-1.5 ml-1">
+          <p className="text-xs text-gray-400">Press Enter to send, Shift+Enter for new line</p>
+          <p className="text-[10px] text-gray-300 italic">
+            Simulated demo — no real bookings are made
+          </p>
+        </div>
       </div>
     </div>
   );

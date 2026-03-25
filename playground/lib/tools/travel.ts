@@ -159,14 +159,20 @@ export const searchFlights = Tool.create({
 
 export const bookFlight = Tool.create({
   name: 'book_flight',
-  description: 'Book a flight (simulation)',
+  description:
+    'Book a flight. IMPORTANT: You must ask the user for passenger name before calling this tool.',
   parameters: {
     airline: { type: 'string', description: 'Airline name' },
     price: { type: 'string', description: 'Flight price' },
+    passengerName: { type: 'string', description: 'Full name of the passenger (ask user first)' },
+    seatPreference: { type: 'string', description: 'Window, aisle, or no preference' },
   },
-  execute: async ({ airline, price }) => {
-    await delay(300);
-    return `✅ Flight booked! ${airline} — Confirmation #TK${Math.floor(Math.random() * 90000 + 10000)}. Total: ${price}`;
+  execute: async ({ airline, price, passengerName, seatPreference }) => {
+    await delay(400);
+    const name = passengerName || 'Guest';
+    const seat = seatPreference || 'no preference';
+    const conf = `TK${Math.floor(Math.random() * 90000 + 10000)}`;
+    return `✅ Flight booked!\n• Passenger: ${name}\n• Airline: ${airline}\n• Seat: ${seat}\n• Confirmation: #${conf}\n• Total: ${price}\n\n(This is a simulated booking for demo purposes)`;
   },
 });
 
@@ -202,34 +208,39 @@ export const searchHotels = Tool.create({
     else if (moderate.some((c) => d.includes(c))) priceLevel = 1.0;
     else if (budget.some((c) => d.includes(c))) priceLevel = 0.6;
 
+    const hotelPrefixes = ['Grand', 'Royal', 'Park', 'The', 'Hotel'];
+    const hotelSuffixes = ['Palace', 'Suites', 'Residence', 'Inn', 'Lodge'];
+    const areas = ['City Center', 'Historic Quarter', 'Arts District', 'Waterfront', 'Old Town'];
+    const pick = (arr: string[]) => arr[Math.floor(Math.abs(dest.charCodeAt(0) * 7) % arr.length)];
+
     const hotels = [
       {
-        name: `${dest} Grand Hotel`,
-        area: 'City Center',
+        name: `${pick(hotelPrefixes)} ${dest} ${pick(hotelSuffixes)}`,
+        area: areas[0],
         price: Math.round(350 * priceLevel),
         rating: '4.8/5',
         highlight: 'Luxury, full-service spa, central location',
       },
       {
-        name: `${dest} Boutique Inn`,
-        area: 'Historic Quarter',
+        name: `Maison ${dest}`,
+        area: areas[1],
         price: Math.round(180 * priceLevel),
         rating: '4.5/5',
-        highlight: 'Charming, local character, walkable',
+        highlight: 'Charming boutique, local character, walkable',
       },
       {
-        name: `${dest} Budget Stay`,
-        area: 'Near Transit',
-        price: Math.round(90 * priceLevel),
+        name: `${dest} Backpackers & Hostel`,
+        area: areas[2],
+        price: Math.round(55 * priceLevel),
         rating: '4.2/5',
-        highlight: 'Clean, affordable, great transport links',
+        highlight: 'Clean, social, great transport links',
       },
       {
-        name: `${dest} Design Hotel`,
-        area: 'Trendy District',
+        name: `The ${dest} Loft`,
+        area: areas[3],
         price: Math.round(220 * priceLevel),
         rating: '4.6/5',
-        highlight: 'Modern design, rooftop bar',
+        highlight: 'Modern design, rooftop terrace, great views',
       },
     ];
 
@@ -248,17 +259,23 @@ export const searchHotels = Tool.create({
 
 export const bookHotel = Tool.create({
   name: 'book_hotel',
-  description: 'Book a hotel (simulation)',
+  description:
+    'Book a hotel. IMPORTANT: You must ask the user for guest name and check-in/check-out dates before calling this tool.',
   parameters: {
     hotel: { type: 'string', description: 'Hotel name' },
     nights: { type: 'string', description: 'Number of nights' },
     pricePerNight: { type: 'string', description: 'Price per night' },
+    guestName: { type: 'string', description: 'Full name for the reservation (ask user first)' },
+    checkIn: { type: 'string', description: 'Check-in date' },
+    checkOut: { type: 'string', description: 'Check-out date' },
   },
-  execute: async ({ hotel, nights, pricePerNight }) => {
-    await delay(300);
+  execute: async ({ hotel, nights, pricePerNight, guestName, checkIn, checkOut }) => {
+    await delay(400);
     const n = parseInt(String(nights)) || 5;
     const p = parseInt(String(pricePerNight).replace(/[^0-9]/g, '')) || 180;
-    return `✅ Hotel booked! ${hotel} — ${n} nights. Confirmation #HT${Math.floor(Math.random() * 90000 + 10000)}. Total: $${n * p}`;
+    const name = guestName || 'Guest';
+    const conf = `HT${Math.floor(Math.random() * 90000 + 10000)}`;
+    return `✅ Hotel booked!\n• Guest: ${name}\n• Hotel: ${hotel}\n• Check-in: ${checkIn || 'TBD'}\n• Check-out: ${checkOut || 'TBD'}\n• Duration: ${n} nights\n• Confirmation: #${conf}\n• Total: $${n * p}\n\n(This is a simulated booking for demo purposes)`;
   },
 });
 
@@ -393,16 +410,20 @@ export const searchRestaurants = Tool.create({
 
 export const bookRestaurant = Tool.create({
   name: 'book_restaurant',
-  description: 'Book a dinner reservation (simulation)',
+  description:
+    'Book a dinner reservation. IMPORTANT: Ask the user for their name, preferred date/time, and party size before calling this tool.',
   parameters: {
     restaurant: { type: 'string', description: 'Restaurant name' },
-    date: { type: 'string', description: 'Reservation date' },
+    date: { type: 'string', description: 'Reservation date and time' },
     partySize: { type: 'string', description: 'Number of guests' },
+    guestName: { type: 'string', description: 'Name for the reservation (ask user first)' },
   },
-  execute: async ({ restaurant, date, partySize }) => {
-    await delay(250);
+  execute: async ({ restaurant, date, partySize, guestName }) => {
+    await delay(300);
     const size = parseInt(String(partySize)) || 2;
-    return `✅ Reservation confirmed! ${restaurant} — ${date || 'First evening'}, party of ${size}. Confirmation #DR${Math.floor(Math.random() * 90000 + 10000)}.`;
+    const name = guestName || 'Guest';
+    const conf = `DR${Math.floor(Math.random() * 90000 + 10000)}`;
+    return `✅ Reservation confirmed!\n• Name: ${name}\n• Restaurant: ${restaurant}\n• Date: ${date || 'First evening'}\n• Party size: ${size}\n• Confirmation: #${conf}\n\n(This is a simulated booking for demo purposes)`;
   },
 });
 
