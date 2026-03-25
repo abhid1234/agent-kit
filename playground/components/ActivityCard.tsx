@@ -12,33 +12,33 @@ const configs: Record<
   { color: string; bgColor: string; borderColor: string; icon: string }
 > = {
   tool_running: {
-    color: 'text-amber-400',
-    bgColor: 'bg-amber-400/5',
-    borderColor: 'border-amber-400/20',
+    color: 'text-amber-700',
+    bgColor: 'bg-amber-50',
+    borderColor: 'border-amber-200',
     icon: '⚡',
   },
   tool_complete: {
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-400/5',
-    borderColor: 'border-emerald-400/20',
+    color: 'text-green-700',
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-200',
     icon: '✓',
   },
   memory_retrieve: {
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-400/5',
-    borderColor: 'border-purple-400/20',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-50',
+    borderColor: 'border-purple-200',
     icon: '🧠',
   },
   memory_save: {
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-400/5',
-    borderColor: 'border-purple-400/20',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-50',
+    borderColor: 'border-purple-200',
     icon: '💾',
   },
   thinking: {
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-400/5',
-    borderColor: 'border-blue-400/20',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-50',
+    borderColor: 'border-blue-200',
     icon: '💭',
   },
 };
@@ -79,7 +79,7 @@ export function ActivityCard({ type, name, detail, latencyMs }: ActivityCardProp
         <div className="flex items-center gap-2">
           <span className={`text-xs font-semibold ${config.color}`}>{name}</span>
           {latencyMs !== undefined && (
-            <span className="text-[10px] text-gray-600">{latencyMs}ms</span>
+            <span className="text-[10px] text-gray-400">{latencyMs}ms</span>
           )}
         </div>
         {detail && <div className="text-[11px] text-gray-500 truncate">{detail}</div>}

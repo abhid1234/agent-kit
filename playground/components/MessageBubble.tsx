@@ -24,8 +24,8 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
       {!isUser && message.activities && message.activities.length > 0 && (
         <div className="flex flex-col gap-1 w-full max-w-[90%]">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <div className="w-1 h-1 rounded-full bg-gray-600" />
-            <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">
+            <div className="w-1 h-1 rounded-full bg-gray-400" />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
               Agent Actions
             </span>
           </div>
@@ -46,15 +46,15 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
         <div
           className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
             isUser
-              ? 'bg-accent-blue/20 border border-accent-blue/30 text-gray-100 rounded-br-md'
-              : 'bg-bg-card border border-border-subtle text-gray-200 rounded-bl-md'
+              ? 'bg-blue-50 border border-blue-200 text-gray-900 rounded-br-md'
+              : 'bg-gray-50 border border-gray-200 text-gray-800 rounded-bl-md'
           }`}
         >
           <p className={`whitespace-pre-wrap break-words ${isStreaming ? 'streaming-cursor' : ''}`}>
             {message.content}
           </p>
         </div>
-        <span className="text-xs text-gray-600 px-1">{formattedTime}</span>
+        <span className="text-xs text-gray-400 px-1">{formattedTime}</span>
       </div>
     </div>
   );

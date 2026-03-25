@@ -332,6 +332,80 @@ export const saveItinerary = Tool.create({
   },
 });
 
+// --- Restaurant Search & Booking ---
+export const searchRestaurants = Tool.create({
+  name: 'search_restaurants',
+  description: 'Search for top-rated restaurants at a destination',
+  parameters: {
+    destination: { type: 'string', description: 'Destination city' },
+    cuisine: { type: 'string', description: 'Preferred cuisine type (optional)' },
+  },
+  execute: async ({ destination, cuisine }) => {
+    await delay(350);
+    const dest = String(destination);
+    const pref = String(cuisine || 'local').toLowerCase();
+
+    // Price tier based on city
+    let priceLevel = 1.0;
+    const expensive = ['tokyo', 'new york', 'london', 'paris', 'zurich', 'singapore'];
+    const budgetCities = ['bali', 'bangkok', 'hanoi', 'mexico city', 'prague'];
+    const d = dest.toLowerCase();
+    if (expensive.some((c) => d.includes(c))) priceLevel = 1.4;
+    else if (budgetCities.some((c) => d.includes(c))) priceLevel = 0.5;
+
+    const restaurants = [
+      {
+        name: `${dest} Local Kitchen`,
+        cuisine: 'Local specialties',
+        price: `$${Math.round(45 * priceLevel)}/person`,
+        rating: '4.7/5',
+        highlight: 'Authentic local cuisine, cozy atmosphere',
+      },
+      {
+        name: `The ${dest} Table`,
+        cuisine: 'Fine dining',
+        price: `$${Math.round(120 * priceLevel)}/person`,
+        rating: '4.9/5',
+        highlight: 'Michelin-starred, tasting menu, reserve ahead',
+      },
+      {
+        name: `Street Bites ${dest}`,
+        cuisine: 'Street food & casual',
+        price: `$${Math.round(15 * priceLevel)}/person`,
+        rating: '4.5/5',
+        highlight: 'Best local street food experience',
+      },
+      {
+        name: `Café ${dest}`,
+        cuisine: 'Café & brunch',
+        price: `$${Math.round(25 * priceLevel)}/person`,
+        rating: '4.6/5',
+        highlight: 'Popular with locals, great coffee',
+      },
+    ];
+
+    return JSON.stringify({
+      restaurants,
+      recommendation: `${restaurants[0].name} is perfect for an authentic ${dest} dining experience.`,
+    });
+  },
+});
+
+export const bookRestaurant = Tool.create({
+  name: 'book_restaurant',
+  description: 'Book a dinner reservation (simulation)',
+  parameters: {
+    restaurant: { type: 'string', description: 'Restaurant name' },
+    date: { type: 'string', description: 'Reservation date' },
+    partySize: { type: 'string', description: 'Number of guests' },
+  },
+  execute: async ({ restaurant, date, partySize }) => {
+    await delay(250);
+    const size = parseInt(String(partySize)) || 2;
+    return `✅ Reservation confirmed! ${restaurant} — ${date || 'First evening'}, party of ${size}. Confirmation #DR${Math.floor(Math.random() * 90000 + 10000)}.`;
+  },
+});
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
