@@ -438,15 +438,65 @@ The playground opens on the **Travel Planner** agent. Try this sequence:
 
 ## Try It Locally
 
-```bash
-npm install @avee1234/agent-kit
-```
+Want to build your own agent? Here's a step-by-step guide — even if you've never used a terminal before.
 
-Or scaffold a new project:
-
-```bash
-npx @avee1234/agent-kit init my-agent
-```
+<div style="background: #0f0f23; border-radius: 16px; padding: 0; margin: 24px 0; overflow: hidden; border: 1px solid #2a2a4a;">
+  <div style="padding: 12px 24px; background: #111827; border-bottom: 1px solid #2a2a4a;">
+    <span style="font-size: 12px; color: #34d399; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">From zero to running agent in 3 minutes</span>
+  </div>
+  <div style="padding: 20px 24px;">
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 24px; height: 24px; border-radius: 50%; background: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 700; flex-shrink: 0;">1</div>
+        <div style="font-size: 14px; color: #e5e7eb; font-weight: 600;">Install Node.js (if you don't have it)</div>
+      </div>
+      <div style="margin-left: 34px; font-size: 13px; color: #a0a0b0; line-height: 1.6;">
+        Go to <a href="https://nodejs.org" style="color: #60a5fa;">nodejs.org</a> and download the LTS version. Install it like any other app. To check if it's working, open Terminal (Mac) or Command Prompt (Windows) and type:
+        <div style="background: #1e1e3e; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-family: monospace; font-size: 12px; color: #e2e8f0;">node --version</div>
+        <div style="font-size: 12px; color: #666; margin-top: 4px;">You should see something like v20.x.x</div>
+      </div>
+    </div>
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 24px; height: 24px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 700; flex-shrink: 0;">2</div>
+        <div style="font-size: 14px; color: #e5e7eb; font-weight: 600;">Create your agent project</div>
+      </div>
+      <div style="margin-left: 34px; font-size: 13px; color: #a0a0b0; line-height: 1.6;">
+        Open your terminal and run this single command. It creates a ready-to-go project:
+        <div style="background: #1e1e3e; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-family: monospace; font-size: 12px; color: #e2e8f0;">npx @avee1234/agent-kit init my-agent</div>
+        <div style="font-size: 12px; color: #666; margin-top: 4px;">This creates a folder called "my-agent" with everything set up</div>
+      </div>
+    </div>
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 24px; height: 24px; border-radius: 50%; background: #059669; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 700; flex-shrink: 0;">3</div>
+        <div style="font-size: 14px; color: #e5e7eb; font-weight: 600;">Install dependencies and run</div>
+      </div>
+      <div style="margin-left: 34px; font-size: 13px; color: #a0a0b0; line-height: 1.6;">
+        <div style="background: #1e1e3e; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-family: monospace; font-size: 12px; color: #e2e8f0;">cd my-agent<br>npm install<br>npm start "Hello, what can you do?"</div>
+        <div style="font-size: 12px; color: #666; margin-top: 4px;">The agent responds using a built-in mock model — no API keys needed</div>
+      </div>
+    </div>
+    <div>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 24px; height: 24px; border-radius: 50%; background: #d97706; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 700; flex-shrink: 0;">4</div>
+        <div style="font-size: 14px; color: #e5e7eb; font-weight: 600;">Connect a real AI model (optional)</div>
+      </div>
+      <div style="margin-left: 34px; font-size: 13px; color: #a0a0b0; line-height: 1.6;">
+        To get real AI responses, add a model configuration. You can use <strong style="color: #4285f4;">Google AI Studio</strong> (free tier available):
+        <div style="background: #1e1e3e; border-radius: 6px; padding: 10px 12px; margin-top: 8px; font-family: monospace; font-size: 12px; color: #e2e8f0; line-height: 1.6;">
+          <span style="color: #888;">// In your agent.ts, change the model config:</span><br>
+          model: {<br>
+          &nbsp;&nbsp;baseURL: '<span style="color: #4285f4;">https://generativelanguage.googleapis.com/v1beta/openai</span>',<br>
+          &nbsp;&nbsp;model: '<span style="color: #4285f4;">gemini-2.0-flash</span>',<br>
+          &nbsp;&nbsp;apiKey: '<span style="color: #fbbf24;">your-key-from-aistudio.google.com</span>',<br>
+          }
+        </div>
+        <div style="font-size: 12px; color: #666; margin-top: 4px;">Get a free API key at <a href="https://aistudio.google.com/apikey" style="color: #4285f4;">aistudio.google.com/apikey</a></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div style="background: linear-gradient(135deg, #0a1628 0%, #0f0f23 100%); border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #1e3a5f; text-align: center;">
   <div style="font-size: 16px; color: #e5e7eb; margin-bottom: 16px;">4 examples to get started</div>
