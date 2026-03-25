@@ -64,12 +64,17 @@ export class HierarchicalStrategy implements Strategy {
 
     // Create a fresh Agent with the manager's model adapter + the delegate tool
     // Preserve the manager's memory so conversation history persists across runs
+    // Use the manager's own system prompt so it retains its personality and instructions
+    // Append delegate tool instructions so it knows how to use the tool
+    const managerSystem = manager.getSystem() ?? '';
+    const delegateInstructions = `\nYou have a "delegate" tool to assign sub-tasks to specialist agents: ${[...agentMap.keys()].join(', ')}.`;
+
     const orchestratorAgent = new Agent({
       name: manager.name,
       model: manager.getModel(),
       memory: manager.getMemory(),
       tools: [delegateTool],
-      system: `You are an orchestrating manager. You have access to specialist agents: ${[...agentMap.keys()].join(', ')}. Use the delegate tool to assign sub-tasks to them.`,
+      system: managerSystem + delegateInstructions,
       maxToolRounds: maxDelegations,
     });
 
