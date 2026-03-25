@@ -137,7 +137,7 @@ export function EventsPanel({ events }: EventsPanelProps) {
             {visibleEvents.map((event, i) => {
               // Tool start — agent spinning up
               if (event.type === 'tool:start') {
-                const rawName = String(event.data.name ?? '');
+                const rawName = String(event.data.toolName ?? event.data.name ?? '');
                 const tool = getToolLabel(rawName);
                 const args = describeArgs(rawName, event.data.arguments);
                 return (
@@ -181,7 +181,7 @@ export function EventsPanel({ events }: EventsPanelProps) {
 
               // Tool end — agent completed
               if (event.type === 'tool:end') {
-                const rawName = String(event.data.name ?? '');
+                const rawName = String(event.data.toolName ?? event.data.name ?? '');
                 const tool = getToolLabel(rawName);
                 const ms = event.latencyMs != null ? `${event.latencyMs}ms` : '';
                 return (
