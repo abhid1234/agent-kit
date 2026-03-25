@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAgentOrTeam } from '@/lib/agents';
+import { createAgent } from '@/lib/agents';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { resolveTier } from '@/lib/tier';
 import { incrementMessageCount } from '@/lib/message-counter';
@@ -49,9 +49,9 @@ export async function POST(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const agentOrTeam = createAgentOrTeam(agentType, sessionId, tier.apiKey);
+        const agent = createAgent(agentType, sessionId, tier.apiKey);
 
-        agentOrTeam.on('*', (event) => {
+        agent.on('*', (event) => {
           const data = JSON.stringify({
             kind: 'event',
             event: {
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
           controller.enqueue(encoder.encode(`data: ${data}\n\n`));
         });
 
-        const result = await agentOrTeam.run(message);
+        const result = await agent.chat(message);
 
         // Increment message count for anonymous users after success
         if (tier.tier === 'anonymous') {
