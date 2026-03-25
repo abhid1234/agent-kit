@@ -10,33 +10,37 @@ const minuteBuckets = new Map<string, RateBucket>();
 const hourBuckets = new Map<string, RateBucket>();
 
 const LIMITS = {
-  perMinute: 10, // max 10 messages per minute per IP
-  perHour: 60, // max 60 messages per hour per IP
+  anonymous: { perMinute: 10, perHour: 60 },
+  authenticated: { perMinute: 20, perHour: 200 },
 };
 
-export function checkRateLimit(ip: string): { allowed: boolean; retryAfterMs?: number } {
+export function checkRateLimit(
+  key: string,
+  tier: 'anonymous' | 'authenticated' = 'anonymous',
+): { allowed: boolean; retryAfterMs?: number } {
   const now = Date.now();
+  const limits = LIMITS[tier];
 
   // Clean stale entries periodically
   if (Math.random() < 0.01) cleanup(now);
 
   // Check minute limit
-  let minute = minuteBuckets.get(ip);
+  let minute = minuteBuckets.get(key);
   if (!minute || now > minute.resetAt) {
     minute = { count: 0, resetAt: now + 60_000 };
-    minuteBuckets.set(ip, minute);
+    minuteBuckets.set(key, minute);
   }
-  if (minute.count >= LIMITS.perMinute) {
+  if (minute.count >= limits.perMinute) {
     return { allowed: false, retryAfterMs: minute.resetAt - now };
   }
 
   // Check hour limit
-  let hour = hourBuckets.get(ip);
+  let hour = hourBuckets.get(key);
   if (!hour || now > hour.resetAt) {
     hour = { count: 0, resetAt: now + 3_600_000 };
-    hourBuckets.set(ip, hour);
+    hourBuckets.set(key, hour);
   }
-  if (hour.count >= LIMITS.perHour) {
+  if (hour.count >= limits.perHour) {
     return { allowed: false, retryAfterMs: hour.resetAt - now };
   }
 
