@@ -18,15 +18,15 @@ const AGENT_TYPES: AgentType[] = [
 
 export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {
   return (
-    <header className="flex items-center justify-between px-6 py-3 bg-bg-secondary border-b border-border-subtle h-14 shrink-0">
+    <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 h-14 shrink-0">
       {/* Branding */}
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-md bg-accent-blue/20 flex items-center justify-center">
+        <div className="w-7 h-7 rounded-md bg-blue-100 flex items-center justify-center">
           <span className="text-accent-blue text-sm font-bold">A</span>
         </div>
-        <span className="font-semibold text-white text-sm tracking-tight">agent-kit</span>
-        <span className="text-gray-600 text-sm">/</span>
-        <span className="text-gray-400 text-sm">playground</span>
+        <span className="font-semibold text-gray-900 text-sm tracking-tight">agent-kit</span>
+        <span className="text-gray-300 text-sm">/</span>
+        <span className="text-gray-500 text-sm">playground</span>
       </div>
 
       {/* Agent Tabs */}
@@ -40,8 +40,8 @@ export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {
               onClick={() => onAgentChange(type)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 ${
                 isActive
-                  ? 'bg-accent-blue/15 text-accent-blue border border-accent-blue/30'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
+                  ? 'bg-blue-50 text-accent-blue border border-blue-200'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-transparent'
               }`}
             >
               <span>{icon}</span>
@@ -54,14 +54,14 @@ export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {
       {/* Session Code + Auth */}
       <div className="flex items-center gap-3">
         {shareCode ? (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-card border border-border-subtle">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200">
             <div className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
-            <span className="text-xs text-gray-400 font-mono">{shareCode}</span>
+            <span className="text-xs text-gray-500 font-mono">{shareCode}</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-card border border-border-subtle">
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />
-            <span className="text-xs text-gray-500 font-mono">connecting...</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200">
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+            <span className="text-xs text-gray-400 font-mono">connecting...</span>
           </div>
         )}
         <AuthButton />

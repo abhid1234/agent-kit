@@ -12,10 +12,10 @@ export function AuthButton() {
         {session.user.image && (
           <img src={session.user.image} alt="" className="w-6 h-6 rounded-full" />
         )}
-        <span className="text-xs text-gray-400">{session.user.name?.split(' ')[0]}</span>
+        <span className="text-xs text-gray-700">{session.user.name?.split(' ')[0]}</span>
         <button
           onClick={() => signOut()}
-          className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
         >
           Sign out
         </button>
@@ -26,7 +26,7 @@ export function AuthButton() {
   return (
     <button
       onClick={() => signIn('google')}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/20"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-gray-900 hover:bg-gray-800 text-white transition-colors"
     >
       <svg width="14" height="14" viewBox="0 0 24 24">
         <path

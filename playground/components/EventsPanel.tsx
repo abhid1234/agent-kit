@@ -17,17 +17,17 @@ export function EventsPanel({ events }: EventsPanelProps) {
   }, [events]);
 
   return (
-    <div className="flex flex-col h-full bg-bg-secondary border-l border-border-subtle">
+    <div className="flex flex-col h-full bg-white border-l border-gray-200">
       {/* Panel header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 shrink-0 bg-gray-50">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-accent-yellow" />
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+          <div className="w-2 h-2 rounded-full bg-yellow-500" />
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
             Live Events
           </span>
         </div>
         {events.length > 0 && (
-          <span className="text-xs text-gray-600 tabular-nums">{events.length}</span>
+          <span className="text-xs text-gray-400 tabular-nums">{events.length}</span>
         )}
       </div>
 
@@ -36,8 +36,8 @@ export function EventsPanel({ events }: EventsPanelProps) {
         {events.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center px-4">
-              <p className="text-gray-600 text-xs">No events yet</p>
-              <p className="text-gray-700 text-xs mt-1">Events appear as the agent works</p>
+              <p className="text-gray-400 text-xs">No events yet</p>
+              <p className="text-gray-400 text-xs mt-1">Events appear as the agent works</p>
             </div>
           </div>
         ) : (

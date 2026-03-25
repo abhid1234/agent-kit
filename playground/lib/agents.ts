@@ -9,6 +9,8 @@ import {
   bookFlight,
   searchHotels,
   bookHotel,
+  searchRestaurants,
+  bookRestaurant,
   calculateBudget,
   saveItinerary,
 } from './tools/travel';
@@ -76,23 +78,23 @@ export function createAgentOrTeam(
   const dbPath = getDbPath(sessionId);
 
   const destinationAgent = new Agent({
-    name: '🔍 Destination Research',
+    name: 'Destination Research Agent',
     model: createModel(apiKey),
     tools: [searchDestinations],
     system:
-      "You are a destination research specialist. Search for destinations matching the user's criteria and return detailed options.",
+      "You are a destination research specialist. Search for destinations matching the user's criteria and return detailed options with highlights.",
   });
 
   const weatherAgent = new Agent({
-    name: '🌤️ Weather Check',
+    name: 'Weather Forecast Agent',
     model: createModel(apiKey),
     tools: [checkWeather],
     system:
-      'You are a weather specialist. Check weather conditions for the destination and travel dates. Give packing advice.',
+      'You are a weather specialist. Check weather conditions for the destination and travel dates. Provide packing advice based on the forecast.',
   });
 
   const flightAgent = new Agent({
-    name: '✈️ Flight Booking',
+    name: 'Flight Booking Agent',
     model: createModel(apiKey),
     tools: [searchFlights, bookFlight],
     system:
@@ -100,39 +102,48 @@ export function createAgentOrTeam(
   });
 
   const hotelAgent = new Agent({
-    name: '🏨 Hotel Booking',
+    name: 'Hotel Booking Agent',
     model: createModel(apiKey),
     tools: [searchHotels, bookHotel],
     system:
-      'You are a hotel booking specialist. Search for hotels, compare options, and book the best value option. Always search first, then book.',
+      'You are a hotel booking specialist. Search for hotels, compare options based on price and rating, and book the best value option.',
+  });
+
+  const dinnerAgent = new Agent({
+    name: 'Dinner Reservation Agent',
+    model: createModel(apiKey),
+    tools: [searchRestaurants, bookRestaurant],
+    system:
+      "You are a dining specialist. Search for highly-rated restaurants at the destination and book a reservation at the best one. Consider local cuisine and the traveler's preferences.",
   });
 
   const budgetAgent = new Agent({
-    name: '💰 Budget Calculator',
+    name: 'Budget Calculator Agent',
     model: createModel(apiKey),
     tools: [calculateBudget],
     system:
-      'You are a budget specialist. Calculate the total trip budget based on flights, hotel, food, activities, and transport costs.',
+      'You are a budget specialist. Calculate the total trip budget including flights, hotel, food, activities, and transport. Give a clear breakdown.',
   });
 
   const manager = new Agent({
-    name: '🧭 Travel Manager',
+    name: 'Travel Concierge',
     model: createModel(apiKey),
     memory: new Memory({ store: 'sqlite', path: dbPath }),
-    system: `You are a travel planning manager coordinating a team of specialists.
+    system: `You are an elite travel concierge coordinating a team of specialist agents.
 For each trip request, delegate to your team in this order:
-1. First, delegate to "🔍 Destination Research" to find destination options
-2. Then delegate to "🌤️ Weather Check" to check weather
-3. Then delegate to "✈️ Flight Booking" to search and book flights
-4. Then delegate to "🏨 Hotel Booking" to search and book a hotel
-5. Finally delegate to "💰 Budget Calculator" to calculate the total budget
+1. Delegate to "Destination Research Agent" to research the destination
+2. Delegate to "Weather Forecast Agent" to check weather conditions
+3. Delegate to "Flight Booking Agent" to find and book flights
+4. Delegate to "Hotel Booking Agent" to find and book accommodation
+5. Delegate to "Dinner Reservation Agent" to find and book a restaurant
+6. Delegate to "Budget Calculator Agent" to calculate the total trip cost
 
-After all agents report back, compile a beautiful final itinerary with all the details.
-Always delegate to at least 3 agents to show the team in action.`,
+After all agents report back, compile a beautiful final itinerary with all bookings, confirmations, and the total budget.
+Always delegate to ALL agents to give the user the full experience.`,
   });
 
   const team = new Team({
-    agents: [destinationAgent, weatherAgent, flightAgent, hotelAgent, budgetAgent],
+    agents: [destinationAgent, weatherAgent, flightAgent, hotelAgent, dinnerAgent, budgetAgent],
     strategy: 'hierarchical',
     manager,
     maxDelegations: 8,

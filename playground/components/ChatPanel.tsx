@@ -29,6 +29,13 @@ export function ChatPanel({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingMessage]);
 
+  // Re-focus input after response completes
+  useEffect(() => {
+    if (!isLoading) {
+      textareaRef.current?.focus();
+    }
+  }, [isLoading]);
+
   const handleSubmit = () => {
     const text = input.trim();
     if (!text || isLoading) return;
@@ -44,11 +51,11 @@ export function ChatPanel({
   };
 
   return (
-    <div className="flex flex-col h-full bg-bg-panel">
+    <div className="flex flex-col h-full bg-white">
       {/* Panel header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border-subtle shrink-0">
-        <div className="w-2 h-2 rounded-full bg-accent-blue" />
-        <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Chat</span>
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200 shrink-0 bg-gray-50">
+        <div className="w-2 h-2 rounded-full bg-blue-600" />
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Chat</span>
       </div>
 
       {/* Messages */}
@@ -56,8 +63,8 @@ export function ChatPanel({
         {messages.length === 0 && !streamingMessage && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-gray-500 text-sm">Start a conversation</p>
-              <p className="text-gray-600 text-xs mt-1">Ask anything — your agent is ready</p>
+              <p className="text-gray-400 text-sm">Start a conversation</p>
+              <p className="text-gray-400 text-xs mt-1">Ask anything — your agent is ready</p>
             </div>
           </div>
         )}
@@ -97,17 +104,17 @@ export function ChatPanel({
         {/* Loading indicator (before streaming starts) */}
         {isLoading && !streamingMessage && activities.length === 0 && (
           <div className="flex items-start gap-2 animate-fade-in">
-            <div className="flex items-center gap-1 px-4 py-2.5 rounded-2xl rounded-bl-md bg-bg-card border border-border-subtle">
+            <div className="flex items-center gap-1 px-4 py-2.5 rounded-2xl rounded-bl-md bg-gray-50 border border-gray-200">
               <span
-                className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce"
+                className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce"
                 style={{ animationDelay: '0ms' }}
               />
               <span
-                className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce"
+                className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce"
                 style={{ animationDelay: '150ms' }}
               />
               <span
-                className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce"
+                className="w-1.5 h-1.5 rounded-full bg-gray-300 animate-bounce"
                 style={{ animationDelay: '300ms' }}
               />
             </div>
@@ -118,12 +125,12 @@ export function ChatPanel({
       </div>
 
       {/* Input bar */}
-      <div className="shrink-0 px-4 py-3 border-t border-border-subtle">
+      <div className="shrink-0 px-4 py-3 border-t border-gray-200">
         <div
           className={`flex items-end gap-2 rounded-xl border transition-colors duration-150 ${
             isLoading
-              ? 'border-border-subtle bg-bg-card/50'
-              : 'border-border-hover bg-bg-card focus-within:border-accent-blue/50'
+              ? 'border-gray-200 bg-gray-50'
+              : 'border-gray-300 bg-white focus-within:border-blue-400'
           }`}
         >
           <textarea
@@ -134,18 +141,18 @@ export function ChatPanel({
             disabled={isLoading}
             placeholder="Send a message..."
             rows={1}
-            className="flex-1 bg-transparent px-3 py-2.5 text-sm text-gray-200 placeholder-gray-600 resize-none outline-none disabled:cursor-not-allowed max-h-32 overflow-y-auto"
+            className="flex-1 bg-transparent px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 resize-none outline-none disabled:cursor-not-allowed max-h-32 overflow-y-auto"
             style={{ minHeight: '40px' }}
           />
           <button
             onClick={handleSubmit}
             disabled={isLoading || !input.trim()}
-            className="mb-1.5 mr-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-accent-blue/20 text-accent-blue hover:bg-accent-blue/30 border border-accent-blue/30 disabled:hover:bg-accent-blue/20"
+            className="mb-1.5 mr-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-blue-600 text-white hover:bg-blue-700 disabled:hover:bg-blue-600"
           >
             Send
           </button>
         </div>
-        <p className="text-xs text-gray-600 mt-1.5 ml-1">
+        <p className="text-xs text-gray-400 mt-1.5 ml-1">
           Press Enter to send, Shift+Enter for new line
         </p>
       </div>
