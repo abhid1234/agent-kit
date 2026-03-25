@@ -29,6 +29,39 @@ function getToolLabel(raw: string): { emoji: string; label: string } {
   return TOOL_LABELS[raw] ?? { emoji: '🔧', label: raw };
 }
 
+// Parse raw tool arguments into a human-readable one-liner
+function describeArgs(rawName: string, argsStr: unknown): string {
+  if (!argsStr || typeof argsStr !== 'string') return '';
+  try {
+    const args = JSON.parse(argsStr);
+    if (rawName === 'search_destinations') return args.query ?? '';
+    if (rawName === 'check_weather')
+      return [args.destination, args.month].filter(Boolean).join(', ');
+    if (rawName === 'search_flights')
+      return [args.destination, args.departDate].filter(Boolean).join(' · ');
+    if (rawName === 'search_hotels')
+      return [args.destination, args.checkIn].filter(Boolean).join(' · ');
+    if (rawName === 'search_restaurants')
+      return [args.destination, args.cuisine].filter(Boolean).join(' · ');
+    if (rawName === 'book_flight')
+      return [args.airline, args.passengerName].filter(Boolean).join(' — ');
+    if (rawName === 'book_hotel') return [args.hotel, args.guestName].filter(Boolean).join(' — ');
+    if (rawName === 'book_restaurant')
+      return [args.restaurant, args.guestName].filter(Boolean).join(' — ');
+    if (rawName === 'calculate_budget')
+      return [args.destination, `${args.days} days`].filter(Boolean).join(' · ');
+    if (rawName === 'web_search') return args.query ?? '';
+    if (rawName === 'lookup_order') return `Order #${args.orderId ?? ''}`;
+    // Fallback: join all string values
+    return Object.values(args)
+      .filter((v) => typeof v === 'string')
+      .join(', ')
+      .slice(0, 60);
+  } catch {
+    return String(argsStr).slice(0, 60);
+  }
+}
+
 function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString([], {
     hour: '2-digit',
@@ -44,17 +77,26 @@ export function EventsPanel({ events }: EventsPanelProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [events]);
 
-  // Filter to only show meaningful events
-  const visibleEvents = events.filter((e) =>
-    [
-      'tool:start',
-      'tool:end',
-      'team:delegate',
-      'team:agent:start',
-      'team:agent:end',
-      'memory:retrieve',
-    ].includes(e.type),
-  );
+  // Filter to only show meaningful events, dedupe consecutive memory:retrieve
+  const visibleEvents: StreamEvent[] = [];
+  let lastType = '';
+  for (const e of events) {
+    if (
+      ![
+        'tool:start',
+        'tool:end',
+        'team:delegate',
+        'team:agent:start',
+        'team:agent:end',
+        'memory:retrieve',
+      ].includes(e.type)
+    )
+      continue;
+    // Skip consecutive memory:retrieve events
+    if (e.type === 'memory:retrieve' && lastType === 'memory:retrieve') continue;
+    visibleEvents.push(e);
+    lastType = e.type;
+  }
 
   // Count completed tools for the summary
   const completedCount = visibleEvents.filter(
@@ -97,7 +139,7 @@ export function EventsPanel({ events }: EventsPanelProps) {
               if (event.type === 'tool:start') {
                 const rawName = String(event.data.name ?? '');
                 const tool = getToolLabel(rawName);
-                const args = event.data.arguments ? String(event.data.arguments).slice(0, 50) : '';
+                const args = describeArgs(rawName, event.data.arguments);
                 return (
                   <div
                     key={`${event.timestamp}-${i}`}
