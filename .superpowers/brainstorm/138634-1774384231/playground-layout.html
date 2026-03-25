@@ -1,0 +1,98 @@
+<h2>Playground Layout</h2>
+<p class="subtitle">Which layout captures the "wow moment" best for a LinkedIn click?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #1a1a2e;">
+      <!-- Mockup A: Chat-only -->
+      <div style="background: #0f0f23; border-radius: 8px; padding: 12px; height: 220px; display: flex; flex-direction: column;">
+        <div style="font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; text-align: center;">agent-kit playground</div>
+        <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 6px;">
+          <div style="background: #1e1e3e; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #a0a0b0; align-self: flex-end; max-width: 70%;">Find papers on Mamba</div>
+          <div style="background: #111827; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #34d399; align-self: flex-start; max-width: 80%;">I found 3 papers on Mamba architecture...</div>
+          <div style="background: #1e1e3e; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #a0a0b0; align-self: flex-end; max-width: 70%;">Save those as notes</div>
+          <div style="background: #111827; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #34d399; align-self: flex-start; max-width: 80%;">Notes saved! I'll remember these.</div>
+        </div>
+        <div style="margin-top: 8px; background: #1e1e3e; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #666;">Type a message...</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Clean Chat</h3>
+      <p>Simple chat interface, nothing else. Familiar, low cognitive load. Like ChatGPT but powered by your framework.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #1a1a2e;">
+      <!-- Mockup B: Chat + Side Panel -->
+      <div style="background: #0f0f23; border-radius: 8px; padding: 12px; height: 220px; display: flex; gap: 8px;">
+        <!-- Chat -->
+        <div style="flex: 2; display: flex; flex-direction: column;">
+          <div style="font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px;">Chat</div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <div style="background: #1e1e3e; border-radius: 4px; padding: 4px 8px; font-size: 9px; color: #a0a0b0; align-self: flex-end;">Find Mamba papers</div>
+            <div style="background: #111827; border-radius: 4px; padding: 4px 8px; font-size: 9px; color: #34d399; align-self: flex-start;">Found 3 papers...</div>
+          </div>
+          <div style="background: #1e1e3e; border-radius: 4px; padding: 4px 8px; font-size: 9px; color: #666;">Type a message...</div>
+        </div>
+        <!-- Side Panel -->
+        <div style="flex: 1; background: #111827; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 10px; color: #fbbf24; font-weight: 600;">Live Events</div>
+          <div style="font-size: 8px; color: #059669;">● tool:start web_search</div>
+          <div style="font-size: 8px; color: #34d399;">● tool:end 340ms</div>
+          <div style="font-size: 8px; color: #60a5fa;">● message response</div>
+          <div style="font-size: 8px; color: #a78bfa;">● memory:save</div>
+          <div style="border-top: 1px solid #1f2937; margin-top: auto; padding-top: 6px;">
+            <div style="font-size: 10px; color: #888; font-weight: 600;">Memory</div>
+            <div style="font-size: 8px; color: #666;">3 messages stored</div>
+            <div style="font-size: 8px; color: #666;">1 summary saved</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Chat + Live Events Panel</h3>
+      <p>Chat on the left, real-time event stream on the right. Shows tools firing, memory saving, token counts. The "under the hood" view.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #1a1a2e;">
+      <!-- Mockup C: Full Dashboard -->
+      <div style="background: #0f0f23; border-radius: 8px; padding: 12px; height: 220px; display: flex; flex-direction: column; gap: 6px;">
+        <!-- Top bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: #60a5fa; font-weight: 600;">agent-kit playground</div>
+          <div style="display: flex; gap: 4px;">
+            <div style="background: #059669; border-radius: 4px; padding: 2px 6px; font-size: 8px; color: white;">Memory: ON</div>
+            <div style="background: #7c3aed; border-radius: 4px; padding: 2px 6px; font-size: 8px; color: white;">Tools: 2</div>
+          </div>
+        </div>
+        <!-- Three columns -->
+        <div style="flex: 1; display: flex; gap: 6px;">
+          <div style="flex: 2; background: #111827; border-radius: 4px; padding: 6px; display: flex; flex-direction: column; gap: 3px;">
+            <div style="font-size: 8px; color: #888;">CHAT</div>
+            <div style="background: #1e1e3e; border-radius: 3px; padding: 3px 6px; font-size: 8px; color: #a0a0b0;">Find papers</div>
+            <div style="background: #0f1520; border-radius: 3px; padding: 3px 6px; font-size: 8px; color: #34d399;">Found 3...</div>
+          </div>
+          <div style="flex: 1; background: #111827; border-radius: 4px; padding: 6px;">
+            <div style="font-size: 8px; color: #888;">EVENTS</div>
+            <div style="font-size: 7px; color: #059669; margin-top: 4px;">● search 340ms</div>
+            <div style="font-size: 7px; color: #60a5fa;">● response 1.2s</div>
+            <div style="font-size: 7px; color: #a78bfa;">● memory save</div>
+          </div>
+          <div style="flex: 1; background: #111827; border-radius: 4px; padding: 6px;">
+            <div style="font-size: 8px; color: #888;">MEMORY</div>
+            <div style="font-size: 7px; color: #34d399; margin-top: 4px;">msgs: 4</div>
+            <div style="font-size: 7px; color: #fbbf24;">summaries: 1</div>
+            <div style="font-size: 7px; color: #60a5fa;">tokens: 342</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C: Full Dashboard</h3>
+      <p>Three-panel layout: chat, events, memory inspector. Maximum transparency — see everything the framework does. Might be overwhelming for casual visitors.</p>
+    </div>
+  </div>
+</div>

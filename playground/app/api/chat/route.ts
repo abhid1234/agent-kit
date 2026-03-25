@@ -1,15 +1,34 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createAgent } from '@/lib/agents';
+import { checkRateLimit } from '@/lib/rate-limit';
 import type { AgentType } from '@/lib/types';
 
 export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
+  // Rate limit by IP
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const limit = checkRateLimit(ip);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Please wait before sending more messages.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((limit.retryAfterMs ?? 60000) / 1000)) },
+      },
+    );
+  }
+
   const { message, agentType, sessionId } = (await request.json()) as {
     message: string;
     agentType: AgentType;
     sessionId: string;
   };
+
+  // Limit message length
+  if (message.length > 2000) {
+    return NextResponse.json({ error: 'Message too long (max 2000 characters).' }, { status: 400 });
+  }
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
