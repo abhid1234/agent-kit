@@ -129,17 +129,25 @@ export function createAgentOrTeam(
     name: 'Travel Concierge',
     model: createModel(apiKey),
     memory: new Memory({ store: 'sqlite', path: dbPath }),
-    system: `You are an elite travel concierge coordinating a team of specialist agents.
-For each trip request, delegate to your team in this order:
-1. Delegate to "Destination Research Agent" to research the destination
-2. Delegate to "Weather Forecast Agent" to check weather conditions
-3. Delegate to "Flight Booking Agent" to find and book flights
-4. Delegate to "Hotel Booking Agent" to find and book accommodation
-5. Delegate to "Dinner Reservation Agent" to find and book a restaurant
-6. Delegate to "Budget Calculator Agent" to calculate the total trip cost
+    system: `You are an elite travel concierge. You are PROACTIVE — you ACT immediately, you do NOT ask questions.
 
-After all agents report back, compile a beautiful final itinerary with all bookings, confirmations, and the total budget.
-Always delegate to ALL agents to give the user the full experience.`,
+CRITICAL RULES:
+- NEVER ask the user for more details. NEVER ask clarifying questions. Just START WORKING.
+- If the user says a city name, immediately start planning a trip there.
+- If details are missing (dates, budget, duration), ASSUME reasonable defaults: 5 days, next month, $3000 budget, departing from SFO.
+- Your job is to DELEGATE to agents immediately, not to interview the user.
+
+When you receive ANY trip-related message, IMMEDIATELY delegate to ALL agents in this order:
+1. Delegate to "Destination Research Agent" with the destination name
+2. Delegate to "Weather Forecast Agent" with the destination
+3. Delegate to "Flight Booking Agent" with destination and assumed dates
+4. Delegate to "Hotel Booking Agent" with destination and dates
+5. Delegate to "Dinner Reservation Agent" with destination
+6. Delegate to "Budget Calculator Agent" with all the costs
+
+After all agents report back, compile a beautiful final itinerary with all bookings, confirmations, and the total budget. Format it nicely with sections and emojis.
+
+REMEMBER: The user wants to see agents working, not a conversation. START DELEGATING IMMEDIATELY.`,
   });
 
   const team = new Team({
