@@ -375,7 +375,32 @@ No LangSmith, no third-party tracing service, no credit card. It's just `EventEm
 
 ---
 
-## Try It
+## Live Playground
+
+I deployed a live playground so you can try it without installing anything:
+
+<div style="background: linear-gradient(135deg, #0a1628 0%, #1a0a28 100%); border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #1e3a5f;">
+  <div style="text-align: center; margin-bottom: 16px;">
+    <a href="https://agent-kit-playground-912353176161.us-central1.run.app" style="font-size: 18px; color: #60a5fa; font-weight: 700; text-decoration: none;">Try the Live Playground →</a>
+  </div>
+  <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <img src="https://www.gstatic.com/devrel-devsite/prod/v0d244f667a3683225cca86d0ecf9b9b81b1e734e55a030bdcd3f3571e8b94a70/cloud/images/favicons/onecloud/super_cloud.png" width="20" height="20" style="border-radius: 4px;" />
+      <span style="font-size: 13px; color: #a0a0b0;">Hosted on <span style="color: #4285f4; font-weight: 600;">Google Cloud Run</span></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" width="20" height="20" />
+      <span style="font-size: 13px; color: #a0a0b0;">Powered by <span style="color: #4285f4; font-weight: 600;">Gemini 2.0 Flash</span> via Google AI Studio</span>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #666;">Chat with 4 different AI agents. Close the tab and come back — they remember you.</div>
+</div>
+
+The playground runs on **Google Cloud Run** (scales to zero, wakes up in seconds) with **Gemini 2.0 Flash** via **Google AI Studio** powering the AI responses. The combination of Cloud Run's serverless scaling and Gemini's speed makes the demo feel instant.
+
+---
+
+## Try It Locally
 
 ```bash
 npm install @avee1234/agent-kit
