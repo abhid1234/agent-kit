@@ -1,5 +1,6 @@
 'use client';
 
+import ReactMarkdown from 'react-markdown';
 import { ChatMessage } from '@/lib/types';
 import { ActivityCard } from './ActivityCard';
 
@@ -50,9 +51,31 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
               : 'bg-gray-50 border border-gray-200 text-gray-800 rounded-bl-md'
           }`}
         >
-          <p className={`whitespace-pre-wrap break-words ${isStreaming ? 'streaming-cursor' : ''}`}>
-            {message.content}
-          </p>
+          <div
+            className={`prose prose-sm prose-gray max-w-none break-words ${isStreaming ? 'streaming-cursor' : ''}`}
+          >
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                strong: ({ children }) => (
+                  <strong className="font-semibold text-gray-900">{children}</strong>
+                ),
+                ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+                li: ({ children }) => <li className="mb-0.5">{children}</li>,
+                h1: ({ children }) => <h3 className="font-bold text-base mt-3 mb-1">{children}</h3>,
+                h2: ({ children }) => <h3 className="font-bold text-base mt-3 mb-1">{children}</h3>,
+                h3: ({ children }) => (
+                  <h4 className="font-semibold text-sm mt-2 mb-1">{children}</h4>
+                ),
+                code: ({ children }) => (
+                  <code className="bg-gray-200 px-1 py-0.5 rounded text-xs">{children}</code>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
         </div>
         <span className="text-xs text-gray-400 px-1">{formattedTime}</span>
       </div>
