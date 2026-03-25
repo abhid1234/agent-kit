@@ -78,7 +78,7 @@ export function createAgentOrTeam(
   const dbPath = getDbPath(sessionId);
 
   const destinationAgent = new Agent({
-    name: 'Destination Research Agent',
+    name: '🔍 Destination Research Agent',
     model: createModel(apiKey),
     tools: [searchDestinations],
     system:
@@ -86,7 +86,7 @@ export function createAgentOrTeam(
   });
 
   const weatherAgent = new Agent({
-    name: 'Weather Forecast Agent',
+    name: '🌤️ Weather Forecast Agent',
     model: createModel(apiKey),
     tools: [checkWeather],
     system:
@@ -94,7 +94,7 @@ export function createAgentOrTeam(
   });
 
   const flightAgent = new Agent({
-    name: 'Flight Booking Agent',
+    name: '✈️ Flight Booking Agent',
     model: createModel(apiKey),
     tools: [searchFlights, bookFlight],
     system:
@@ -102,7 +102,7 @@ export function createAgentOrTeam(
   });
 
   const hotelAgent = new Agent({
-    name: 'Hotel Booking Agent',
+    name: '🏨 Hotel Booking Agent',
     model: createModel(apiKey),
     tools: [searchHotels, bookHotel],
     system:
@@ -110,7 +110,7 @@ export function createAgentOrTeam(
   });
 
   const dinnerAgent = new Agent({
-    name: 'Dinner Reservation Agent',
+    name: '🍽️ Dinner Reservation Agent',
     model: createModel(apiKey),
     tools: [searchRestaurants, bookRestaurant],
     system:
@@ -118,7 +118,7 @@ export function createAgentOrTeam(
   });
 
   const budgetAgent = new Agent({
-    name: 'Budget Calculator Agent',
+    name: '💰 Budget Calculator Agent',
     model: createModel(apiKey),
     tools: [calculateBudget],
     system:
@@ -126,28 +126,25 @@ export function createAgentOrTeam(
   });
 
   const manager = new Agent({
-    name: 'Travel Concierge',
+    name: '🧭 Travel Concierge',
     model: createModel(apiKey),
     memory: new Memory({ store: 'sqlite', path: dbPath }),
-    system: `You are an elite travel concierge. You are PROACTIVE — you ACT immediately, you do NOT ask questions.
+    system: `You are an elite travel concierge coordinating a team of 6 specialist agents.
 
-CRITICAL RULES:
-- NEVER ask the user for more details. NEVER ask clarifying questions. Just START WORKING.
-- If the user says a city name, immediately start planning a trip there.
-- If details are missing (dates, budget, duration), ASSUME reasonable defaults: 5 days, next month, $3000 budget, departing from SFO.
-- Your job is to DELEGATE to agents immediately, not to interview the user.
+YOUR APPROACH:
+- If the user mentions a DESTINATION (any city or country), IMMEDIATELY start delegating to your agents. Do not ask more questions — assume reasonable defaults for anything missing (5 days, next month, $3000 budget, departing SFO).
+- If the user says something vague like "help me plan a vacation" WITHOUT a destination, ask ONE short question: "Where would you like to go?" — nothing else.
+- NEVER ask multiple questions at once. NEVER ask for budget, dates, party size etc. Just get the destination and GO.
 
-When you receive ANY trip-related message, IMMEDIATELY delegate to ALL agents in this order:
-1. Delegate to "Destination Research Agent" with the destination name
-2. Delegate to "Weather Forecast Agent" with the destination
-3. Delegate to "Flight Booking Agent" with destination and assumed dates
-4. Delegate to "Hotel Booking Agent" with destination and dates
-5. Delegate to "Dinner Reservation Agent" with destination
-6. Delegate to "Budget Calculator Agent" with all the costs
+Once you have a destination, delegate to ALL 6 agents in order:
+1. "🔍 Destination Research Agent" — research the destination
+2. "🌤️ Weather Forecast Agent" — check weather
+3. "✈️ Flight Booking Agent" — find and book flights
+4. "🏨 Hotel Booking Agent" — find and book a hotel
+5. "🍽️ Dinner Reservation Agent" — find and book a restaurant
+6. "💰 Budget Calculator Agent" — calculate total cost
 
-After all agents report back, compile a beautiful final itinerary with all bookings, confirmations, and the total budget. Format it nicely with sections and emojis.
-
-REMEMBER: The user wants to see agents working, not a conversation. START DELEGATING IMMEDIATELY.`,
+After all agents report back, compile a final itinerary with all bookings and confirmations. Be concise and well-formatted.`,
   });
 
   const team = new Team({
