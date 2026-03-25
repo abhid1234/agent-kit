@@ -175,14 +175,42 @@ export default function Home() {
               setEvents((prev) => [...prev, event]);
 
               // Track activities for inline display in chat
-              if (event.type === 'tool:start') {
+              if (event.type === 'team:delegate') {
+                // Multi-agent: manager delegating to a specialist
+                const toAgent = String(event.data.to ?? 'agent');
+                const task = String(event.data.task ?? '').slice(0, 80);
+                setActivities((prev) => [
+                  ...prev,
+                  {
+                    id: uuidv4(),
+                    type: 'tool_running',
+                    name: `${toAgent}`,
+                    detail: task || 'Working...',
+                    timestamp: event.timestamp,
+                  },
+                ]);
+              } else if (event.type === 'team:agent:end') {
+                const agentName = String(event.data.agent ?? 'agent');
+                setActivities((prev) =>
+                  prev.map((a) =>
+                    a.type === 'tool_running' && a.name === agentName
+                      ? {
+                          ...a,
+                          type: 'tool_complete' as const,
+                          name: `${agentName}`,
+                          latencyMs: event.latencyMs,
+                        }
+                      : a,
+                  ),
+                );
+              } else if (event.type === 'tool:start') {
                 const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
                 setActivities((prev) => [
                   ...prev,
                   {
                     id: uuidv4(),
                     type: 'tool_running',
-                    name: `Running ${toolName}`,
+                    name: `${toolName}`,
                     detail: event.data.arguments
                       ? String(event.data.arguments).slice(0, 80)
                       : undefined,
@@ -193,11 +221,11 @@ export default function Home() {
                 const toolName = String(event.data.name ?? event.data.toolName ?? 'tool');
                 setActivities((prev) =>
                   prev.map((a) =>
-                    a.type === 'tool_running' && a.name === `Running ${toolName}`
+                    a.type === 'tool_running' && a.name === toolName
                       ? {
                           ...a,
                           type: 'tool_complete' as const,
-                          name: `${toolName} complete`,
+                          name: `${toolName}`,
                           latencyMs: event.latencyMs,
                         }
                       : a,
