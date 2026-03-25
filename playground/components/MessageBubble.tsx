@@ -1,7 +1,7 @@
 'use client';
 
 import { ChatMessage } from '@/lib/types';
-import { ToolCallIndicator } from './ToolCallIndicator';
+import { ActivityCard } from './ActivityCard';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -20,11 +20,23 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
     <div
       className={`flex flex-col gap-1.5 animate-fade-in ${isUser ? 'items-end' : 'items-start'}`}
     >
-      {/* Tool calls above assistant messages */}
-      {!isUser && message.toolCalls && message.toolCalls.length > 0 && (
-        <div className="flex flex-col gap-1 w-full max-w-[85%]">
-          {message.toolCalls.map((tc, i) => (
-            <ToolCallIndicator key={i} toolCall={tc} />
+      {/* Agent orchestration steps above assistant messages */}
+      {!isUser && message.activities && message.activities.length > 0 && (
+        <div className="flex flex-col gap-1 w-full max-w-[90%]">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <div className="w-1 h-1 rounded-full bg-gray-600" />
+            <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">
+              Agent Actions
+            </span>
+          </div>
+          {message.activities.map((activity) => (
+            <ActivityCard
+              key={activity.id}
+              type={activity.type}
+              name={activity.name}
+              detail={activity.detail}
+              latencyMs={activity.latencyMs}
+            />
           ))}
         </div>
       )}
