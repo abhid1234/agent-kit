@@ -1,14 +1,19 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentType, ChatMessage, StreamEvent, SessionInfo, MemoryStats } from '@/lib/types';
 import { TopBar } from '@/components/TopBar';
 import { ChatPanel } from '@/components/ChatPanel';
 import { EventsPanel } from '@/components/EventsPanel';
 import { MemoryPanel } from '@/components/MemoryPanel';
+import { FreeTierBanner } from '@/components/FreeTierBanner';
 
 export default function Home() {
+  const { status: authStatus } = useSession();
+  const isSignedIn = authStatus === 'authenticated';
+
   const [session, setSession] = useState<SessionInfo | null>(null);
   const [activeAgent, setActiveAgent] = useState<AgentType>('travel-planner');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -16,6 +21,9 @@ export default function Home() {
   const [memoryStats, setMemoryStats] = useState<MemoryStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState<string>('');
+  const [messageCount, setMessageCount] = useState(0);
+  const [limitReached, setLimitReached] = useState(false);
+  const FREE_TIER_LIMIT = 50;
 
   // Initialize session on mount
   useEffect(() => {
@@ -124,6 +132,10 @@ export default function Home() {
                 };
                 setMessages((prev) => [...prev, assistantMsg]);
                 setStreamingMessage('');
+                // Increment local message count for anonymous users after a successful response
+                if (!isSignedIn) {
+                  setMessageCount((prev) => prev + 1);
+                }
                 accumulatedContent = '';
               }
               setIsLoading(false);
@@ -149,6 +161,9 @@ export default function Home() {
               const content = parsed.content as string;
               accumulatedContent = content;
               setStreamingMessage(content);
+            } else if (kind === 'limit_reached') {
+              setLimitReached(true);
+              setIsLoading(false);
             } else if (kind === 'error') {
               const errMsg: ChatMessage = {
                 id: uuidv4(),
@@ -190,6 +205,13 @@ export default function Home() {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left: Chat (50%) */}
         <div className="w-1/2 min-w-0 flex flex-col">
+          {!isSignedIn && (
+            <FreeTierBanner
+              messageCount={messageCount}
+              messageLimit={FREE_TIER_LIMIT}
+              limitReached={limitReached}
+            />
+          )}
           <ChatPanel
             messages={messages}
             streamingMessage={streamingMessage || undefined}

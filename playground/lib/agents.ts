@@ -6,11 +6,11 @@ import { searchDestinations, checkWeather, saveItinerary } from './tools/travel'
 import { getDbPath } from './session';
 import type { AgentType } from './types';
 
-function createModel() {
+function createModel(apiKey: string) {
   return new OpenAICompatibleAdapter({
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai',
     model: 'gemini-2.0-flash',
-    apiKey: process.env.GOOGLE_AI_API_KEY ?? '',
+    apiKey,
   });
 }
 
@@ -37,11 +37,11 @@ const agentConfigs: Record<AgentType, { tools: Tool[]; system: string }> = {
   },
 };
 
-export function createAgent(agentType: AgentType, sessionId: string): Agent {
+export function createAgent(agentType: AgentType, sessionId: string, apiKey: string): Agent {
   const config = agentConfigs[agentType];
   return new Agent({
     name: agentType,
-    model: createModel(),
+    model: createModel(apiKey),
     memory: new Memory({ store: 'sqlite', path: getDbPath(sessionId) }),
     tools: config.tools,
     system: config.system,

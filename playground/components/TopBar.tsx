@@ -1,6 +1,7 @@
 'use client';
 
 import { AgentType, AGENT_LABELS } from '@/lib/types';
+import { AuthButton } from '@/components/AuthButton';
 
 interface TopBarProps {
   activeAgent: AgentType;
@@ -50,8 +51,8 @@ export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {
         })}
       </nav>
 
-      {/* Session Code */}
-      <div className="flex items-center gap-2">
+      {/* Session Code + Auth */}
+      <div className="flex items-center gap-3">
         {shareCode ? (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-card border border-border-subtle">
             <div className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
@@ -63,6 +64,7 @@ export function TopBar({ activeAgent, onAgentChange, shareCode }: TopBarProps) {
             <span className="text-xs text-gray-500 font-mono">connecting...</span>
           </div>
         )}
+        <AuthButton />
       </div>
     </header>
   );
