@@ -10,6 +10,7 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
   toolCalls?: ToolCallInfo[];
+  activities?: ActivityItem[];
 }
 
 export interface ToolCallInfo {
