@@ -139,12 +139,16 @@ export default function Home() {
 
                 // Attach activities to the message so they persist above the response
                 setActivities((currentActivities) => {
+                  // Mark any still-running activities as complete before attaching
+                  const finalized = currentActivities.map((a) =>
+                    a.type === 'tool_running' ? { ...a, type: 'tool_complete' as const } : a,
+                  );
                   const assistantMsg: ChatMessage = {
                     id: uuidv4(),
                     role: 'assistant',
                     content: finalContent,
                     timestamp: Date.now(),
-                    activities: currentActivities.length > 0 ? [...currentActivities] : undefined,
+                    activities: finalized.length > 0 ? finalized : undefined,
                   };
                   setMessages((prev) => [...prev, assistantMsg]);
                   return [];
