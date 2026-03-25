@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDbPath } from '@/lib/session';
-import { SQLiteStore } from '@avee1234/agent-kit';
 import fs from 'fs';
+import { createRequire } from 'module';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = await params;
@@ -12,35 +12,65 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   }
 
   try {
-    const store = new SQLiteStore(dbPath);
-    const agentTypes = [
-      'research-assistant',
-      'customer-support',
-      'code-reviewer',
-      'travel-planner',
-    ];
-    let messageCount = 0;
-    let summaryCount = 0;
-    const notes: Array<{ title: string; content: string }> = [];
+    // Query SQLite directly to get ALL agent IDs and messages
+    const require2 = createRequire(import.meta.url);
+    const Database = require2('better-sqlite3');
+    const db = new Database(dbPath, { readonly: true });
 
-    for (const agentId of agentTypes) {
-      const messages = await store.getRecentMessages(agentId, 1000);
-      messageCount += messages.length;
-      const summaries = await store.searchSummaries(agentId, '', 100);
-      summaryCount += summaries.length;
-      for (const msg of messages) {
-        if (msg.role === 'tool' && msg.content.includes('Note saved:')) {
-          const match = msg.content.match(/Note saved: "(.+)"/);
-          if (match) notes.push({ title: match[1], content: '' });
-        }
-        if (msg.role === 'tool' && msg.content.includes('Itinerary for')) {
-          const match = msg.content.match(/Itinerary for (.+) saved/);
-          if (match) notes.push({ title: `Trip: ${match[1]}`, content: '' });
-        }
+    // Count all messages across all agents
+    const msgCount = db.prepare('SELECT COUNT(*) as count FROM messages').get() as {
+      count: number;
+    };
+    const messageCount = msgCount?.count ?? 0;
+
+    // Count all summaries
+    const sumCount = db.prepare('SELECT COUNT(*) as count FROM summaries').get() as {
+      count: number;
+    };
+    const summaryCount = sumCount?.count ?? 0;
+
+    // Extract notes from tool results
+    const notes: Array<{ title: string; content: string }> = [];
+    const toolMessages = db
+      .prepare(
+        "SELECT content FROM messages WHERE role = 'tool' AND (content LIKE '%Note saved%' OR content LIKE '%Itinerary for%' OR content LIKE '%booked%' OR content LIKE '%Reservation confirmed%')",
+      )
+      .all() as Array<{ content: string }>;
+
+    for (const msg of toolMessages) {
+      const noteMatch = msg.content.match(/Note saved: "(.+)"/);
+      if (noteMatch) {
+        notes.push({ title: noteMatch[1], content: '' });
+        continue;
+      }
+
+      const itinMatch = msg.content.match(/Itinerary for (.+) saved/);
+      if (itinMatch) {
+        notes.push({ title: `📋 Trip: ${itinMatch[1]}`, content: '' });
+        continue;
+      }
+
+      const flightMatch = msg.content.match(/Flight booked! (.+?) — Confirmation (#\w+)/);
+      if (flightMatch) {
+        notes.push({ title: `✈️ ${flightMatch[1]}`, content: flightMatch[2] });
+        continue;
+      }
+
+      const hotelMatch = msg.content.match(/Hotel booked! (.+?) — .+?(Confirmation #\w+)/);
+      if (hotelMatch) {
+        notes.push({ title: `🏨 ${hotelMatch[1]}`, content: hotelMatch[2] });
+        continue;
+      }
+
+      const dinnerMatch = msg.content.match(/Reservation confirmed! (.+?) — (.+?)\./);
+      if (dinnerMatch) {
+        notes.push({ title: `🍽️ ${dinnerMatch[1]}`, content: dinnerMatch[2] });
+        continue;
       }
     }
 
-    store.close();
+    db.close();
+
     return NextResponse.json({
       messageCount,
       summaryCount,
