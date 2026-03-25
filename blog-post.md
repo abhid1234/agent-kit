@@ -14,27 +14,27 @@ The result is [`@avee1234/agent-kit`](https://github.com/abhid1234/agent-kit): a
 
 ## The Problem With Existing Tools
 
-When I started building AI agents in TypeScript, I ran into the same wall most people hit:
+There are great tools out there — LangChain, Vercel AI SDK, CrewAI — and I've learned a lot from all of them. But I had a specific combination of needs that didn't exist in one place:
 
 <div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">
-  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
-    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">LangChain</div>
-    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Python-first ecosystem. JS SDK exists but the abstraction layer is heavy — many concepts to learn. Memory and agents require stitching together multiple packages.</div>
-    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: Steep learning curve</div>
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #60a5fa;">
+    <div style="font-size: 14px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">LangChain</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Powerful and comprehensive. I wanted something more lightweight for my use case — fewer concepts to learn, memory that works out of the box.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #60a5fa; font-weight: 600;">GREAT FOR: Breadth of integrations</div>
   </div>
-  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
-    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Vercel AI SDK</div>
-    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Excellent streaming UX with growing agent features. Memory exists but requires external store setup. No built-in multi-agent coordination.</div>
-    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: Memory not zero-config</div>
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #60a5fa;">
+    <div style="font-size: 14px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Vercel AI SDK</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Excellent streaming UX and growing fast. I wanted zero-config persistent memory and built-in multi-agent coordination on top.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #60a5fa; font-weight: 600;">GREAT FOR: Streaming chat UI</div>
   </div>
-  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #e94560;">
-    <div style="font-size: 14px; font-weight: 700; color: #e94560; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">CrewAI</div>
-    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Has the multi-agent model I wanted, but it's Python-only. Not an option for a TypeScript codebase.</div>
-    <div style="margin-top: 12px; font-size: 12px; color: #e94560; font-weight: 600;">VERDICT: Wrong language</div>
+  <div style="flex: 1; min-width: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 20px; border: 1px solid #60a5fa;">
+    <div style="font-size: 14px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">CrewAI</div>
+    <div style="font-size: 13px; color: #a0a0b0; line-height: 1.5;">Best multi-agent coordination model I've seen. I wanted to bring that same pattern to the TypeScript ecosystem.</div>
+    <div style="margin-top: 12px; font-size: 12px; color: #60a5fa; font-weight: 600;">GREAT FOR: Multi-agent in Python</div>
   </div>
 </div>
 
-What I needed was simple: an agent that could use tools, remember things across sessions, and coordinate with other agents — all in TypeScript, without a PhD in framework internals. So I built it.
+So I built what I needed: zero-config persistent memory, simple tool system, multi-agent coordination, and TypeScript-first — all in one package.
 
 ---
 
@@ -301,7 +301,7 @@ No LangSmith, no third-party tracing service, no credit card. It's just `EventEm
 
 ---
 
-## The Comparison
+## Where Each Tool Shines
 
 <div style="background: #0f0f23; border-radius: 16px; overflow: hidden; margin: 24px 0; border: 1px solid #2a2a4a;">
   <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
