@@ -74,63 +74,80 @@ So I built what I needed: zero-config persistent memory, simple tool system, mul
   </div>
 </div>
 
-### Agent
-
-The entry point. Give it a model, some tools, and a memory store and it's ready.
-
-```typescript
-import { Agent, Memory, Tool } from '@avee1234/agent-kit';
-
-const agent = new Agent({
-  name: 'research-assistant',
-  model: { provider: 'ollama', model: 'llama3' },
-  memory: new Memory({ store: 'sqlite' }),
-  tools: [searchTool, saveNoteTool],
-  system: 'You are a research assistant.',
-});
-
-const response = await agent.chat('Find recent papers on transformers');
-```
-
-### Tool
-
-Tools are just functions with a schema attached:
-
-```typescript
-const weatherTool = Tool.create({
-  name: 'get_weather',
-  description: 'Get current weather for a city',
-  parameters: {
-    city: { type: 'string', description: 'City name' },
-  },
-  execute: async ({ city }) => {
-    return fetch(`https://wttr.in/${city}?format=j1`).then(r => r.json());
-  },
-});
-```
-
-### Memory
-
-This is the piece I spent the most time on, and the one I'm most proud of.
-
-```typescript
-new Memory({ store: 'sqlite' })                    // persistent, zero-config
-new Memory({ store: 'sqlite', embedding: adapter }) // + semantic search
-new Memory({ store: 'postgres', url: DATABASE_URL }) // production-grade
-new Memory()                                         // in-memory for tests
-```
-
-### Team
-
-Multi-agent coordination without the boilerplate:
-
-```typescript
-const team = new Team({
-  agents: [researcher, writer],
-  strategy: 'sequential',
-});
-await team.run('Research AI frameworks and write a summary');
-```
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+  <div style="background: #ffffff; border: 2px solid #3b82f6; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(59,130,246,0.1);">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 18px;">🤖</div>
+      <div>
+        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">Agent</div>
+        <div style="font-size: 11px; color: #64748b;">The orchestrator</div>
+      </div>
+    </div>
+    <div style="font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px;">Give it a model, tools, and memory. It handles the rest — tool calls, context, streaming.</div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.6; color: #334155; overflow-x: auto;">
+      <span style="color: #7c3aed;">const</span> agent = <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Agent</span>({<br>
+      &nbsp;&nbsp;name: <span style="color: #059669;">'research-assistant'</span>,<br>
+      &nbsp;&nbsp;model: { provider: <span style="color: #059669;">'ollama'</span> },<br>
+      &nbsp;&nbsp;memory: <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Memory</span>({ store: <span style="color: #059669;">'sqlite'</span> }),<br>
+      &nbsp;&nbsp;tools: [searchTool, noteTool],<br>
+      });<br><br>
+      <span style="color: #7c3aed;">await</span> agent.<span style="color: #2563eb;">chat</span>(<span style="color: #059669;">'Find papers on transformers'</span>);
+    </div>
+  </div>
+  <div style="background: #ffffff; border: 2px solid #8b5cf6; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(139,92,246,0.1);">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #f5f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px;">🔧</div>
+      <div>
+        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">Tool</div>
+        <div style="font-size: 11px; color: #64748b;">Actions the agent can take</div>
+      </div>
+    </div>
+    <div style="font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px;">Just a function with a schema. No decorators, no inheritance. 5 lines.</div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.6; color: #334155; overflow-x: auto;">
+      <span style="color: #7c3aed;">const</span> weatherTool = <span style="color: #2563eb;">Tool.create</span>({<br>
+      &nbsp;&nbsp;name: <span style="color: #059669;">'get_weather'</span>,<br>
+      &nbsp;&nbsp;description: <span style="color: #059669;">'Get weather for a city'</span>,<br>
+      &nbsp;&nbsp;parameters: { city: { type: <span style="color: #059669;">'string'</span> } },<br>
+      &nbsp;&nbsp;execute: <span style="color: #7c3aed;">async</span> ({ city }) => {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #7c3aed;">return</span> fetch(<span style="color: #059669;">`wttr.in/${city}`</span>);<br>
+      &nbsp;&nbsp;},<br>
+      });
+    </div>
+  </div>
+  <div style="background: #ffffff; border: 2px solid #10b981; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(16,185,129,0.1);">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-size: 18px;">🧠</div>
+      <div>
+        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">Memory</div>
+        <div style="font-size: 11px; color: #64748b;">Persistent across sessions</div>
+      </div>
+    </div>
+    <div style="font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px;">SQLite, PostgreSQL, or in-memory. Auto-summarizes old conversations. Optional embedding search.</div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.8; color: #334155; overflow-x: auto;">
+      <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Memory</span>({ store: <span style="color: #059669;">'sqlite'</span> }) <span style="color: #94a3b8;">// zero-config</span><br>
+      <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Memory</span>({ store: <span style="color: #059669;">'postgres'</span>, url }) <span style="color: #94a3b8;">// production</span><br>
+      <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Memory</span>({ embedding: adapter }) <span style="color: #94a3b8;">// semantic</span><br>
+      <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Memory</span>() <span style="color: #94a3b8;">// in-memory for tests</span>
+    </div>
+  </div>
+  <div style="background: #ffffff; border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(245,158,11,0.1);">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #fffbeb; display: flex; align-items: center; justify-content: center; font-size: 18px;">👥</div>
+      <div>
+        <div style="font-size: 16px; font-weight: 700; color: #1e293b;">Team</div>
+        <div style="font-size: 11px; color: #64748b;">Multi-agent coordination</div>
+      </div>
+    </div>
+    <div style="font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px;">4 strategies: Sequential, Parallel, Debate, Hierarchical. Agents work together on one task.</div>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.6; color: #334155; overflow-x: auto;">
+      <span style="color: #7c3aed;">const</span> team = <span style="color: #7c3aed;">new</span> <span style="color: #2563eb;">Team</span>({<br>
+      &nbsp;&nbsp;agents: [researcher, writer],<br>
+      &nbsp;&nbsp;strategy: <span style="color: #059669;">'sequential'</span>,<br>
+      });<br><br>
+      <span style="color: #7c3aed;">await</span> team.<span style="color: #2563eb;">run</span>(<span style="color: #059669;">'Research and summarize'</span>);
+    </div>
+  </div>
+</div>
 
 ---
 
