@@ -174,7 +174,7 @@ export function CodePreview({ agentType }: CodePreviewProps) {
 
         {isOpen && (
           <a
-            href="https://github.com/avee1234/agent-kit"
+            href="https://github.com/abhid1234/agent-kit"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-end gap-0"
