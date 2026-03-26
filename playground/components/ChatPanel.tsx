@@ -165,12 +165,12 @@ export function ChatPanel({
                   ))}
                 </div>
                 <a
-                  href="https://github.com/avee1234/agent-kit"
+                  href="https://github.com/abhid1234/agent-kit"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block mt-2 text-[11px] text-gray-400 hover:text-blue-600 transition-colors duration-150"
                 >
-                  github.com/avee1234/agent-kit ↗
+                  github.com/abhid1234/agent-kit ↗
                 </a>
               </div>
             </div>
