@@ -224,17 +224,21 @@ export class Agent {
     // Emit final assistant message event
     this.emit('message', { role: 'assistant', content: response.content });
 
-    // Save exchange to memory
+    // Save exchange to memory — include tool messages so results (bookings, notes) are persisted
     if (this.memory) {
-      const exchangeMessages: Message[] = [
-        userMessage,
+      // Find index of user message in the messages array
+      const userIdx = messages.indexOf(userMessage);
+      // Everything after the user message = new tool interactions from this turn
+      const newMessages = userIdx >= 0 ? messages.slice(userIdx) : [userMessage];
+      // Append final assistant response
+      newMessages.push(
         createMessage({
           role: 'assistant',
           content: response.content,
           toolCalls: response.toolCalls,
         }),
-      ];
-      await this.memory.saveExchange(this.name, exchangeMessages);
+      );
+      await this.memory.saveExchange(this.name, newMessages);
     }
 
     return response;
