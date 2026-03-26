@@ -4,7 +4,7 @@
 
 A live web playground where anyone can try agent-kit in their browser — no install, no signup. Hosted on Google Cloud Run, powered by Gemini via Google AI Studio.
 
-**Goal:** One URL that an interviewer or LinkedIn visitor clicks, chats with an AI agent, sees tools fire and memory persist, closes the tab, comes back, and the agent remembers them.
+**Goal:** One URL where anyone can try agent-kit in their browser — chat with an AI agent, see tools fire and memory persist, close the tab, come back, and the agent remembers them.
 
 ## Tech Stack
 
@@ -178,11 +178,11 @@ playground/
 
 ## Success Criteria
 
-1. LinkedIn visitor clicks link → playground loads in under 2 seconds
+1. Visitor clicks link → playground loads in under 2 seconds
 2. First message gets a streamed response with visible tool execution
 3. Events panel updates in real-time as agent works
 4. Memory panel shows stored messages/notes
 5. Close tab → reopen → agent remembers previous conversation
 6. Share code lets someone else see your session
 7. Switching between 4 agent tabs works without page reload
-8. Looks polished enough for a LinkedIn post (sleek dark theme, smooth animations)
+8. Looks polished and professional (clean theme, smooth animations)
