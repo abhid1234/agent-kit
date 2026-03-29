@@ -140,16 +140,22 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
     if (msg.toolCallId) {
       result.tool_call_id = msg.toolCallId;
       // Gemini requires 'name' on tool result messages — look it up from the preceding assistant message
+      let foundName = false;
       if (allMessages) {
         for (const m of allMessages) {
           if (m.toolCalls) {
             const tc = m.toolCalls.find((t) => t.id === msg.toolCallId);
             if (tc) {
               result.name = tc.name;
+              foundName = true;
               break;
             }
           }
         }
+      }
+      // Fallback: Gemini rejects empty names, so use a placeholder
+      if (!foundName) {
+        result.name = 'tool_result';
       }
     }
     return result;
