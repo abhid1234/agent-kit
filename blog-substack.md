@@ -128,7 +128,7 @@ I deployed a live playground so you can try it without installing anything:
 
 **[Try the Live Playground ->](https://www.abhi-agent-kit.space)**
 
-Hosted on **Google Cloud Run**. Powered by **Gemini 3.0 Flash** via **Google AI Studio**.
+Hosted on **Google Cloud Run**. Powered by **Gemini Flash** via **Google AI Studio**.
 
 Chat with 4 different AI agents. Close the tab and come back — they remember you.
 

@@ -166,7 +166,7 @@ const agent = new Agent({
 
 **[www.abhi-agent-kit.space](https://www.abhi-agent-kit.space)**
 
-4 pre-built agents with real-time tool execution, persistent memory, and live event streaming. Powered by Gemini 3.0 Flash on Google Cloud Run.
+4 pre-built agents with real-time tool execution, persistent memory, and live event streaming. Powered by Gemini Flash on Google Cloud Run.
 
 ---
 

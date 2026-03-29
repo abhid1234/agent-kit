@@ -13,7 +13,7 @@ const agent = new Agent({
   name: 'my-agent',
   model: {
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    model: 'gemini-3.0-flash',
+    model: 'gemini-2.0-flash',
     apiKey: process.env.GOOGLE_AI_API_KEY ?? '',
   },
   memory: new Memory({ store: 'sqlite', path: './memory.db' }),

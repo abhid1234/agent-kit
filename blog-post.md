@@ -413,7 +413,7 @@ I deployed a live playground so you can try it without installing anything:
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #4285f4, #7c3aed); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;">✦</div>
-      <span style="font-size: 13px; color: #475569;">Powered by <span style="color: #4285f4; font-weight: 600;">Gemini 3.0 Flash</span></span>
+      <span style="font-size: 13px; color: #475569;">Powered by <span style="color: #4285f4; font-weight: 600;">Gemini Flash</span></span>
     </div>
   </div>
   <div style="margin-top: 16px; background: #ffffff; border-radius: 8px; padding: 12px 16px; border: 1px solid #e2e8f0; font-size: 12px; color: #64748b; text-align: center;">
@@ -423,7 +423,7 @@ I deployed a live playground so you can try it without installing anything:
 
 The playground has a **light theme** (white/gray), opens on the **Travel Planner** by default with a welcome screen showing clickable prompt suggestions, and lets you switch between 4 agents using tabs. Each agent has a "View Code" toggle that shows its actual source — you can see exactly how the tools are wired up. There's also a "Powered by agent-kit" architecture banner that explains how the framework connects everything.
 
-The playground runs on **Google Cloud Run** (scales to zero, wakes up in seconds) with **Gemini 3.0 Flash** via **Google AI Studio** powering the AI responses.
+The playground runs on **Google Cloud Run** (scales to zero, wakes up in seconds) with **Gemini Flash** via **Google AI Studio** powering the AI responses.
 
 ### Try This: Plan a Trip in 60 Seconds
 
