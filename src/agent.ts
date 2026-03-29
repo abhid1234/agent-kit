@@ -127,8 +127,15 @@ export class Agent {
         );
       }
 
-      // Add recent messages
-      messages.push(...ctx.recentMessages);
+      // Add recent messages — filter out tool result messages from memory
+      // as they may lack the tool name field required by some providers (e.g., Gemini)
+      const filteredRecent = ctx.recentMessages.filter((m) => m.role !== 'tool');
+      // Also filter out assistant messages that only contain tool calls (no text content)
+      // since without the corresponding tool results they break the conversation flow
+      const cleanRecent = filteredRecent.filter(
+        (m) => !(m.role === 'assistant' && !m.content && m.toolCalls?.length),
+      );
+      messages.push(...cleanRecent);
     }
 
     // Add current user message
