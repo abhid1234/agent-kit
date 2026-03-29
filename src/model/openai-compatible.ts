@@ -18,7 +18,7 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
   async chat(messages: Message[], tools?: ToolDefinition[]): Promise<ModelResponse> {
     const body: Record<string, unknown> = {
       model: this.config.model,
-      messages: messages.map((m) => this.toOpenAIMessage(m)),
+      messages: messages.map((m) => this.toOpenAIMessage(m, messages)),
     };
     if (tools?.length) {
       body.tools = tools.map((t) => ({
@@ -74,7 +74,7 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
     if (this.config.apiKey) headers['Authorization'] = `Bearer ${this.config.apiKey}`;
     const body: Record<string, unknown> = {
       model: this.config.model,
-      messages: messages.map((m) => this.toOpenAIMessage(m)),
+      messages: messages.map((m) => this.toOpenAIMessage(m, messages)),
       stream: true,
     };
     if (tools?.length) {
@@ -128,7 +128,7 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
     }
   }
 
-  private toOpenAIMessage(msg: Message): Record<string, unknown> {
+  private toOpenAIMessage(msg: Message, allMessages?: Message[]): Record<string, unknown> {
     const result: Record<string, unknown> = { role: msg.role, content: msg.content };
     if (msg.toolCalls) {
       result.tool_calls = msg.toolCalls.map((tc) => ({
@@ -137,7 +137,21 @@ export class OpenAICompatibleAdapter implements ModelAdapter {
         function: { name: tc.name, arguments: tc.arguments },
       }));
     }
-    if (msg.toolCallId) result.tool_call_id = msg.toolCallId;
+    if (msg.toolCallId) {
+      result.tool_call_id = msg.toolCallId;
+      // Gemini requires 'name' on tool result messages — look it up from the preceding assistant message
+      if (allMessages) {
+        for (const m of allMessages) {
+          if (m.toolCalls) {
+            const tc = m.toolCalls.find((t) => t.id === msg.toolCallId);
+            if (tc) {
+              result.name = tc.name;
+              break;
+            }
+          }
+        }
+      }
+    }
     return result;
   }
 }
