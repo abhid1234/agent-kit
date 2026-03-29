@@ -7,3 +7,8 @@ docs-site/node_modules/
 docs-site/build/
 docs-site/.docusaurus/
 interview-prep.md
+blog-post.md
+blog-preview.html
+blog-substack.md
+blog-images/
+demo-overlays/
