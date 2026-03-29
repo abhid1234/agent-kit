@@ -6,6 +6,8 @@
 
 TypeScript-first library for building stateful, persistent AI agents.
 
+**[Live Playground](https://www.abhi-agent-kit.space)** | **[Blog Post](https://abhid.substack.com/p/i-built-an-open-source-ai-agent-framework)** | **[npm](https://www.npmjs.com/package/@avee1234/agent-kit)**
+
 <p align="center">
   <img src="assets/demo.svg" alt="agent-kit demo — memory persists across sessions" width="750" />
 </p>
@@ -333,6 +335,14 @@ const agent = new Agent({
 });
 ```
 
+## Try It Live
+
+Try agent-kit in your browser — no install, no signup:
+
+**[www.abhi-agent-kit.space](https://www.abhi-agent-kit.space)**
+
+4 pre-built agents (Travel Planner, Research Assistant, Customer Support, Code Reviewer) with real-time tool execution, persistent memory, and live event streaming. Powered by Gemini 2.0 Flash on Google Cloud Run.
+
 ## What You Can Build
 
 - **Research assistant** — web search + note-taking + session memory
@@ -341,6 +351,11 @@ const agent = new Agent({
 - **Data analyst** — SQL query tool + chart generation + persistent findings
 - **Personal assistant** — calendar access + email tools + long-term user preferences
 - **DevOps incident responder** — log search + runbook lookup + alert suppression
+
+## Read More
+
+- **[Blog Post](https://abhid.substack.com/p/i-built-an-open-source-ai-agent-framework)** — the full story of why and how I built agent-kit
+- **[Documentation](https://abhid1234.github.io/agent-kit/)** — API reference, guides, and examples
 
 ## Contributing
 
