@@ -3,7 +3,6 @@ import { Agent } from '../agent';
 import { Tool } from '../tool';
 import type { AgentEventEmitter } from '../events';
 import type { Strategy, StrategyOptions, TeamResult, AgentResponse } from './interface';
-import type { Memory } from '../memory';
 
 export class HierarchicalStrategy implements Strategy {
   async execute(
