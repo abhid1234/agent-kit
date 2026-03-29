@@ -13,7 +13,7 @@ TypeScript-first library for building stateful, persistent AI agents.
 ## Why agent-kit?
 
 <p align="center">
-  <img src="blog-images/01-problem-cards.png" alt="Comparison with LangChain, Vercel AI SDK, CrewAI" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/a427e237-04d0-421e-b1b7-ae2567c1d5d6_1883x981.png" alt="Comparison with LangChain, Vercel AI SDK, CrewAI" width="700" />
 </p>
 
 - **Persistent memory across sessions** — SQLite or PostgreSQL. Restart your process; the agent still remembers.
@@ -27,7 +27,11 @@ TypeScript-first library for building stateful, persistent AI agents.
 ## 4 Core Concepts
 
 <p align="center">
-  <img src="blog-images/02-four-concepts.png" alt="Agent, Tool, Memory, Team — 4 core concepts with code" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/b36d2dd8-ee82-4798-864d-e56c1801293e_1883x1267.png" alt="Agent, Tool, Memory, Team — 4 core concepts" width="700" />
+</p>
+
+<p align="center">
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/6ffd48ee-59bc-4c0f-8b0f-3cae0e674a4c_1455x1470.png" alt="Agent, Tool, Memory, Team — with code examples" width="700" />
 </p>
 
 ---
@@ -76,13 +80,13 @@ No model config required — ships with a built-in `MockAdapter` for development
 ## The "Wow Moment": Memory That Survives Restarts
 
 <p align="center">
-  <img src="blog-images/03-memory-terminal.png" alt="Agent remembers context across process restarts" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/fe5daa4c-39a6-4754-abf5-b5ec12ad3ebb_1406x768.png" alt="Agent remembers context across process restarts" width="700" />
 </p>
 
 Kill the process, restart it, same SQLite file — the agent picks up where it left off.
 
 <p align="center">
-  <img src="blog-images/04-memory-pipeline.png" alt="Short-term → Summarization → Long-term memory pipeline" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/299b2c3f-97e2-4e85-baaf-81edd3965c7c_1406x602.png" alt="Short-term → Summarization → Long-term memory pipeline" width="700" />
 </p>
 
 ---
@@ -90,7 +94,7 @@ Kill the process, restart it, same SQLite file — the agent picks up where it l
 ## Multi-Agent Coordination
 
 <p align="center">
-  <img src="blog-images/05-strategies.png" alt="4 coordination strategies: Sequential, Parallel, Debate, Hierarchical" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/ec242300-00e3-47b8-a399-695c235ecf84_1406x1402.png" alt="4 coordination strategies: Sequential, Parallel, Debate, Hierarchical" width="700" />
 </p>
 
 ```typescript
@@ -107,7 +111,7 @@ const result = await team.run('What is the best database for embeddings?');
 ## Built-In Observability
 
 <p align="center">
-  <img src="blog-images/06-observability.png" alt="Real-time event stream: tool:start, tool:end, memory" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/1588753c-8afa-4f9e-8e30-39090368c641_1406x471.png" alt="Real-time event stream: tool:start, tool:end, memory" width="700" />
 </p>
 
 ```typescript
@@ -115,6 +119,14 @@ agent.on('*', (e) => console.log(e.type, e.data, e.latencyMs));
 ```
 
 No LangSmith, no third-party service. Just `EventEmitter` — pipe it to whatever you use.
+
+---
+
+## Where Each Tool Shines
+
+<p align="center">
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/4ac5f833-33a0-4c48-92fe-20c27f4426e2_1406x565.png" alt="Comparison table: LangChain vs Vercel AI SDK vs CrewAI vs agent-kit" width="700" />
+</p>
 
 ---
 
@@ -149,7 +161,7 @@ const agent = new Agent({
 ## Try It Live
 
 <p align="center">
-  <img src="blog-images/10-playground.png" alt="Live playground powered by Google Cloud Run and Gemini" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/381c61cd-cc61-46de-9351-460ec3b78012_1405x563.png" alt="Live playground powered by Google Cloud Run and Gemini" width="700" />
 </p>
 
 **[www.abhi-agent-kit.space](https://www.abhi-agent-kit.space)**
@@ -161,7 +173,7 @@ const agent = new Agent({
 ## What You Can Build
 
 <p align="center">
-  <img src="blog-images/09-examples.png" alt="4 example agents: research, travel, support, code review" width="700" />
+  <img src="https://substack-post-media.s3.amazonaws.com/public/images/97e622f7-78f6-4066-bd2b-4ce4452b78f4_1405x936.png" alt="What I'd do differently — lessons learned" width="700" />
 </p>
 
 - **Travel planner** — destination search + weather + flight/hotel booking + budget calculator
