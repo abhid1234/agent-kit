@@ -12,7 +12,7 @@ const AGENT_CODE: Record<AgentType, string> = {
 
 const agent = new Agent({
   name: 'travel-planner',
-  model: { provider: 'gemini', model: 'gemini-2.0-flash' },
+  model: { provider: 'gemini', model: 'gemini-3.0-flash' },
   memory: new Memory({ store: 'sqlite' }),
   tools: [searchDestinations, checkWeather,
           searchFlights, bookFlight,
@@ -26,7 +26,7 @@ const response = await agent.chat('Plan a trip to Paris');`,
 
 const agent = new Agent({
   name: 'research-assistant',
-  model: { provider: 'gemini', model: 'gemini-2.0-flash' },
+  model: { provider: 'gemini', model: 'gemini-3.0-flash' },
   memory: new Memory({ store: 'sqlite' }),
   tools: [webSearch, saveNote],
   system: 'You are a thorough research assistant...',
@@ -40,7 +40,7 @@ const response = await agent.chat(
 
 const agent = new Agent({
   name: 'customer-support',
-  model: { provider: 'gemini', model: 'gemini-2.0-flash' },
+  model: { provider: 'gemini', model: 'gemini-3.0-flash' },
   memory: new Memory({ store: 'sqlite' }),
   tools: [lookupOrder, processRefund, escalateTicket],
   system: 'You are a helpful customer support agent...',
@@ -54,7 +54,7 @@ const response = await agent.chat(
 
 const agent = new Agent({
   name: 'code-reviewer',
-  model: { provider: 'gemini', model: 'gemini-2.0-flash' },
+  model: { provider: 'gemini', model: 'gemini-3.0-flash' },
   memory: new Memory({ store: 'sqlite' }),
   tools: [analyzeCode, checkDependencies, suggestFix],
   system: 'You are an expert code reviewer...',

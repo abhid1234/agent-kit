@@ -20,7 +20,7 @@ import type { AgentType } from './types';
 function createModel(apiKey: string) {
   return new OpenAICompatibleAdapter({
     baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3.0-flash',
     apiKey,
   });
 }
