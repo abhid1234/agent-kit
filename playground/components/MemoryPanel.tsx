@@ -35,10 +35,9 @@ export function MemoryPanel({ stats, shareCode }: MemoryPanelProps) {
 
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5 min-h-0">
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <StatBox label="Messages" value={stats?.messageCount ?? 0} />
           <StatBox label="Summaries" value={stats?.summaryCount ?? 0} />
-          <StatBox label="Tokens" value={stats ? formatTokens(stats.tokenEstimate) : '—'} />
         </div>
 
         {/* Persistence indicator */}
@@ -111,9 +110,4 @@ function StatBox({ label, value }: { label: string; value: number | string }) {
       <span className="text-xs text-gray-500">{label}</span>
     </div>
   );
-}
-
-function formatTokens(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return String(n);
 }
