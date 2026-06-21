@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "google-workspace": {
+      "command": "node",
+      "args": [
+        "/home/abhidaas/.gemini/extensions/google-workspace/dist/index.js",
+        "--use-dot-names"
+      ]
+    },
+    "gdocs": {
+      "command": "/home/abhidaas/Core/Workspace/ClaudeCode/Work/gmail-mcp-env/bin/python",
+      "args": ["/home/abhidaas/Core/Workspace/ClaudeCode/Work/gdocs-mcp-server.py"]
+    }
+  }
+}
